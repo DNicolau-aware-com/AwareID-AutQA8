@@ -1,0 +1,212 @@
+"""
+Pytest configuration and fixtures.
+
+Provides shared fixtures for all tests including API clients,
+test data, and authentication tokens.
+"""
+
+from __future__ import annotations
+
+import pytest
+from pathlib import Path
+
+# Try to import, but make optional for now
+try:
+    from autqa.core.api_client import ApiClient
+    from autqa.core.config import get_settings
+    from autqa.core.env_store import EnvStore
+    FRAMEWORK_AVAILABLE = True
+except ImportError as e:
+    print(f'[DEBUG] Framework import failed: {e}')
+    import traceback
+    traceback.print_exc()
+    FRAMEWORK_AVAILABLE = False
+    ApiClient = None
+
+# Try to import EnrollmentService
+try:
+    from autqa.services.enrollment_service import EnrollmentService
+    ENROLLMENT_SERVICE_AVAILABLE = True
+except ImportError as e:
+    print(f'[DEBUG] Framework import failed: {e}')
+    import traceback
+    traceback.print_exc()
+    ENROLLMENT_SERVICE_AVAILABLE = False
+    EnrollmentService = None
+
+
+# ==============================================================================
+# SESSION-LEVEL FIXTURES (run once per test session)
+# ==============================================================================
+
+@pytest.fixture(scope="session")
+def settings():
+    """Load settings from .env file (once per session)."""
+    if not FRAMEWORK_AVAILABLE:
+        pytest.skip("Framework modules not available")
+    return get_settings()
+
+
+@pytest.fixture(scope="session")
+def api_client_session():
+    """
+    API client that lasts for entire test session.
+    
+    Reuses the same token across all tests.
+    """
+    if not FRAMEWORK_AVAILABLE:
+        pytest.skip("Framework modules not available")
+    
+    return ApiClient()
+
+
+# ==============================================================================
+# FUNCTION-LEVEL FIXTURES (run for each test)
+# ==============================================================================
+
+@pytest.fixture
+def api_client():
+    """
+    Fresh API client for each test.
+    
+    Use this when you need isolation between tests.
+    """
+    if not FRAMEWORK_AVAILABLE:
+        pytest.skip("Framework modules not available")
+    
+    client = ApiClient()
+    
+    # Force token refresh to ensure we have a valid token
+    try:
+        client.refresh_token()
+    except Exception:
+        # If refresh fails, continue anyway - some tests might not need auth
+        pass
+    
+    return client
+
+
+@pytest.fixture
+def enrollment_service(api_client, test_username):
+    """
+    Enrollment service instance with method name compatibility wrapper.
+    
+    Provides access to enrollment methods with both naming conventions:
+    - Original: initiate_enrollment, add_face_data, add_voice_data, etc.
+    - Test names: enroll, addFace, addVoice, addDevice, addDocumentOCR
+    """
+    if not ENROLLMENT_SERVICE_AVAILABLE:
+        pytest.skip("EnrollmentService not available")
+    
+    service = EnrollmentService(api_client)
+    
+    # Add compatibility method aliases for the test cases
+    # These map test method names to actual service methods
+    def enroll_wrapper():
+        """Wrapper that provides proper username for enrollment."""
+        import uuid
+        username = f"test_user_{uuid.uuid4().hex[:8]}"
+        return service.initiate_enrollment(
+            username=username,
+            email=f"{username}@test.example.com",
+            save_token=False
+        )
+    
+    service.enroll = enroll_wrapper
+    
+    service.addFace = lambda token: service.add_face_data(
+        enrollment_token=token, 
+        face_frames=[],  # Empty frames - will likely fail but structure is correct
+        save_registration_code=False
+    )
+    service.addVoice = lambda token: service.add_voice_data(
+        enrollment_token=token,
+        voice_data={}
+    )
+    service.addDevice = lambda token: service.add_device_data(
+        enrollment_token=token,
+        device_fingerprint={}
+    )
+    service.addDocumentOCR = lambda token: service.add_document_data(
+        enrollment_token=token,
+        document_images=[],
+        document_type="passport"
+    )
+    service.validateDocumentType = lambda token: service.add_document_data(
+        enrollment_token=token,
+        document_images=[],
+        document_type="passport"
+    )
+    
+    return service
+
+
+@pytest.fixture
+def env_store():
+    """Environment store for reading/writing .env."""
+    if not FRAMEWORK_AVAILABLE:
+        pytest.skip("Framework modules not available")
+    
+    from autqa.core.config import default_env_path
+    return EnvStore(default_env_path())
+
+
+@pytest.fixture
+def test_username():
+    """Generate unique test username."""
+    import uuid
+    return f"test_user_{uuid.uuid4().hex[:8]}"
+
+
+@pytest.fixture
+def test_email(test_username):
+    """Generate test email."""
+    return f"{test_username}@test.example.com"
+
+
+# ==============================================================================
+# PYTEST CONFIGURATION
+# ==============================================================================
+
+def pytest_configure(config):
+    """Configure pytest with custom markers."""
+    config.addinivalue_line(
+        "markers", "integration: mark test as integration test"
+    )
+    config.addinivalue_line(
+        "markers", "slow: mark test as slow running"
+    )
+    config.addinivalue_line(
+        "markers", "enrollment: mark test as enrollment-related"
+    )
+    config.addinivalue_line(
+        "markers", "authentication: mark test as authentication-related"
+    )
+    config.addinivalue_line(
+        "markers", "requires_token: mark test as requiring OAuth token"
+    )
+    config.addinivalue_line(
+        "markers", "stateless: mark test as stateless API test"
+    )
+    config.addinivalue_line(
+        "markers", "face_liveness: mark test as face liveness API related"
+    )
+
+
+def pytest_collection_modifyitems(config, items):
+    """Automatically mark tests based on their location."""
+    for item in items:
+        # Auto-mark integration tests
+        if "integration" in str(item.fspath):
+            item.add_marker(pytest.mark.integration)
+        
+        # Auto-mark based on test name
+        if "enrollment" in item.name.lower():
+            item.add_marker(pytest.mark.enrollment)
+        
+        if "auth" in item.name.lower():
+            item.add_marker(pytest.mark.authentication)
+        
+        # Auto-mark stateless API tests
+        if "stateless_apis" in str(item.fspath):
+            item.add_marker(pytest.mark.stateless)

@@ -1,0 +1,4 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+userExistsAlready: False (correct for new user)
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

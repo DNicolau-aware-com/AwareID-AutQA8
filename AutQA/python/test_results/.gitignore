@@ -1,0 +1,9 @@
+﻿# Ignore all files in test_results
+*
+
+# But keep the directory structure
+!.gitignore
+!.gitkeep
+!reports/.gitkeep
+!logs/.gitkeep
+!screenshots/.gitkeep

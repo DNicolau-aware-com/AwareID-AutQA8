@@ -1,0 +1,5 @@
+[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/calculateROI
+
+ ROI response structure is valid
+  Required fields present: ['x', 'y', 'width', 'height']
+  Content-Type: application/json

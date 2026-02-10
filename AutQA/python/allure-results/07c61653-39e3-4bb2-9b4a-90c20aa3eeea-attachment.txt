@@ -1,0 +1,17 @@
+
+============================================================
+ENROLLMENT SETTINGS
+============================================================
+  ENABLED:  add_face
+  DISABLED: add_document
+  DISABLED: add_voice
+  DISABLED: add_pin
+  DISABLED: check_device_security
+  DISABLED: add_device
+  DISABLED: enable_age_estimation
+  ENABLED:  prevent_duplicate_enrollments
+  VALUE:    duplicate_face_match_threshold = 80
+  VALUE:    rfid_portrait_selfie_threshold = 3
+  VALUE:    ocr_portrait_selfie_threshold = 2.0
+  VALUE:    document_rfid = DISABLED
+  VALUE:    max_device_ids = 3

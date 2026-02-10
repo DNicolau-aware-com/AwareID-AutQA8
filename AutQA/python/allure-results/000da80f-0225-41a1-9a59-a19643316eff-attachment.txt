@@ -1,0 +1,5 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+Correctly rejected missing username: 500 - INTERNAL_SERVER_ERROR

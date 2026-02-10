@@ -1,0 +1,2 @@
+[INFO] POST https://qa8.awareid.com/faceliveness/analyze
+Non-JSON error response: Required field "video" is missing.

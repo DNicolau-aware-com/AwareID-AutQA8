@@ -1,0 +1,93 @@
+
+================================================================================
+FACE MATCHER SERVER CAPABILITIES SUMMARY
+================================================================================
+
+================================================================================
+?? GET /nexaface/version
+[INFO] GET https://qa8.awareid.com/nexaface/version
+?? Response Status: 200
+?? Response: Aware NexaFace Library, version 2.14 r173027
+================================================================================
+
+
+?? Server Version: Aware NexaFace Library, version 2.14 r173027
+
+?? Algorithms:
+
+================================================================================
+?? POST /nexaface/compare
+?? Request Body:
+{
+  "probe": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "gallery": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "workflow": {
+    "comparator": {
+      "algorithm": "F200",
+      "faceTypes": [
+        "VISIBLE_FRONTAL"
+      ]
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 113,
+    "description": "The specified algorithm is not enabled."
+  }
+}
+================================================================================
+
+  ? F200: Disabled
+
+================================================================================
+?? POST /nexaface/compare
+?? Request Body:
+{
+  "probe": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "gallery": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "workflow": {
+    "comparator": {
+      "algorithm": "F500",
+      "faceTypes": [
+        "VISIBLE_FRONTAL"
+      ]
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 500,
+    "description": "The input image is invalid."
+  }
+}
+================================================================================
+
+  ? F500: Error {'error': {'code': 500, 'description': 'The input image is invalid.'}}
+
+?? Endpoints:
+  ? GET  /nexaface/version
+  ? POST /nexaface/compare
+  ? POST /nexaface/export
+
+================================================================================

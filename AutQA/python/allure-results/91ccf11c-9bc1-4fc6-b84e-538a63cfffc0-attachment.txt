@@ -1,0 +1,4 @@
+[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/calculateROI
+
+ ROI calculated for 640x480
+  ROI: (82, 23) - 475x384

@@ -1,0 +1,4 @@
+[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/analyzeImage
+
+ Batch analysis successful!
+  Images processed: 2

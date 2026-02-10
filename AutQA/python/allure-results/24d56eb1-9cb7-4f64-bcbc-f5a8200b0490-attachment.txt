@@ -1,0 +1,5 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace
+
+Add face response fields: ['livenessResult', 'faceDuplicateCheck', 'enrollmentStatus', 'registrationCode', 'faceLivenessResults']
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

@@ -1,0 +1,14 @@
+
+>>> FIRST REQUEST: POST /onboarding/enrollment/enroll
+>>> PAYLOAD: {'username': 'TroyKohler', 'email': 'TroyKohler@mireya.netinfo', 'firstName': 'Troy', 'lastName': 'Kohler', 'phoneNumber': '+17742961793'}
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+<<< STATUS:   200
+<<< RESPONSE: {'enrollmentToken': 'd5a8a8e1-7cb3-4414-a5ec-6ba77fc21175', 'userExistsAlready': False, 'requiredChecks': ['addFace'], 'recordVideo': False}
+
+>>> SECOND REQUEST (duplicate): POST /onboarding/enrollment/enroll
+>>> PAYLOAD: {'username': 'TroyKohler', 'email': 'TroyKohler@mireya.netinfo', 'firstName': 'Troy', 'lastName': 'Kohler', 'phoneNumber': '+17742961793'}
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+<<< STATUS:   200
+<<< RESPONSE: {'enrollmentToken': '4d1bba4d-4607-475d-a0f4-d73714f27766', 'userExistsAlready': False, 'requiredChecks': ['addFace'], 'recordVideo': False}

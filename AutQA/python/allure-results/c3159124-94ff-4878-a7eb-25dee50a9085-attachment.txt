@@ -1,0 +1,43 @@
+
+================================================================================
+?? POST /nexaface/compare
+?? Request Body:
+{
+  "metadata": {
+    "username": "test_user",
+    "client_device_brand": "Apple",
+    "client_device_model": "iPhone 14",
+    "client_os_version": "iOS 17.0",
+    "client_version": "1.0.0",
+    "localization": "en-US",
+    "programming_language_version": "Python 3.12"
+  },
+  "probe": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "gallery": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "workflow": {
+    "comparator": {
+      "algorithm": "F500",
+      "faceTypes": [
+        "VISIBLE_FRONTAL"
+      ]
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 500,
+    "description": "The input image is invalid."
+  }
+}
+================================================================================
+

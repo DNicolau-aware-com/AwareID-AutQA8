@@ -1,0 +1,23 @@
+
+================================================================================
+?? POST /nexaface/export
+?? Request Body:
+{
+  "encounter": {
+    "id": "test_001"
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/export
+[INFO] POST https://qa8.awareid.com/nexaface/export
+[INFO] POST https://qa8.awareid.com/nexaface/export
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 202,
+    "description": "Encounter has no image or template data."
+  }
+}
+================================================================================
+

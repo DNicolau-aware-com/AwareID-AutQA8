@@ -1,0 +1,7 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace
+
+Registration code: c4b90b87-061d-4348-aba3-373f220f731a
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

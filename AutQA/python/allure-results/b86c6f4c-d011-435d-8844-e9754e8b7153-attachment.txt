@@ -1,0 +1,25 @@
+
+================================================================================
+?? POST /documentVerification/validateDocumentType
+?? Request Body:
+{
+  "documentImage": {
+    "lightingScheme": 6,
+    "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4QA0RXhpZgAATU0AKgAAAA... (truncated, length: 646810)",
+    "format": ".jpeg"
+  }
+}
+[INFO] POST https://qa8.awareid.com/documentVerification/validateDocumentType
+[INFO] POST https://qa8.awareid.com/documentVerification/validateDocumentType
+[INFO] POST https://qa8.awareid.com/documentVerification/validateDocumentType
+
+?? Response Status: 500
+?? Response Body:
+{
+  "errorCode": "OCR_PROCESSING_ERROR",
+  "errorMsg": "Unexpected error occurred during processing",
+  "status": 500,
+  "timestamp": "2026-02-09 22:45:38.607"
+}
+================================================================================
+

@@ -1,0 +1,17 @@
+[pytest]
+pythonpath = .
+testpaths = tests
+markers =
+    smoke: quick import/smoke tests
+    optional: optional tests (requires extra deps)
+    e2e: end-to-end integration tests
+
+
+
+[pytest]
+markers =
+    stateless: Stateless API tests
+    face_liveness: Face Liveness API tests
+    encrypted: Encrypted endpoint tests
+    
+testpaths = tests

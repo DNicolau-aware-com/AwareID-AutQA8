@@ -1,0 +1,3 @@
+[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/enroll returned 500, retrying in 1.0s... (attempt 1/3)
+[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/enroll returned 500, retrying in 1.0s... (attempt 2/3)
+[1m[31mERROR   [0m autqa.core.http_client:http_client.py:223 POST /onboarding/enrollment/enroll failed after 3 attempts: 500 {"errorCode":"INTERNAL_SERVER_ERROR","errorMsg":"Validation failed for argument [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.aware.indigo.onboarding.controller.Enrollmen

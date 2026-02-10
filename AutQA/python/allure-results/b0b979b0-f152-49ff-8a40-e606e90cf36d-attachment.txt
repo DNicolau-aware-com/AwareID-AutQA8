@@ -1,0 +1,78 @@
+
+================================================================================
+CHECKING AVAILABLE ENDPOINTS
+================================================================================
+
+================================================================================
+?? GET /nexaface/version
+[INFO] GET https://qa8.awareid.com/nexaface/version
+?? Response Status: 200
+?? Response: Aware NexaFace Library, version 2.14 r173027
+================================================================================
+
+  ? GET    /version             AVAILABLE (status: 200)
+
+================================================================================
+?? POST /nexaface/compare
+?? Request Body:
+{
+  "probe": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "gallery": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "workflow": {
+    "comparator": {
+      "algorithm": "F500",
+      "faceTypes": [
+        "VISIBLE_FRONTAL"
+      ]
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 500,
+    "description": "The input image is invalid."
+  }
+}
+================================================================================
+
+  ? POST   /compare             AVAILABLE (status: 500)
+
+================================================================================
+?? POST /nexaface/export
+?? Request Body:
+{
+  "encounter": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)",
+    "id": "test_001"
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/export
+[INFO] POST https://qa8.awareid.com/nexaface/export
+[INFO] POST https://qa8.awareid.com/nexaface/export
+
+?? Response Status: 500
+?? Response Body:
+{
+  "error": {
+    "code": 500,
+    "description": "The input image is invalid."
+  }
+}
+================================================================================
+
+  ? POST   /export              AVAILABLE (status: 500)
+
+================================================================================
+AVAILABLE: 3 endpoints
+NOT FOUND: 0 endpoints
+================================================================================

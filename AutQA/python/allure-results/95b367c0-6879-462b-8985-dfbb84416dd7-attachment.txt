@@ -1,0 +1,9 @@
+
+================================================================================
+?? GET /nexaface/version
+[INFO] GET https://qa8.awareid.com/nexaface/version
+?? Response Status: 200
+?? Response: Aware NexaFace Library, version 2.14 r173027
+================================================================================
+
+? Nexaface (Face Matcher) version: Aware NexaFace Library, version 2.14 r173027

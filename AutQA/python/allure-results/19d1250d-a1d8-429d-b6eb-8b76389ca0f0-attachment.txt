@@ -1,0 +1,3 @@
+[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/addFace returned 500, retrying in 1.0s... (attempt 1/3)
+[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/addFace returned 500, retrying in 1.0s... (attempt 2/3)
+[31m[1mERROR   [0m autqa.core.http_client:http_client.py:223 POST /onboarding/enrollment/addFace failed after 3 attempts: 500 {"errorCode":"INTERNAL_SERVER_ERROR","errorMsg":"No value present","status":500,"timestamp":"2026-02-10 03:08:16"}

@@ -1,0 +1,6 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+Tokens are unique
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

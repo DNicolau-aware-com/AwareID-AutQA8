@@ -1,0 +1,3 @@
+[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/analyzeImage
+
+ Detection mode 'DOMINANT_FACE_BY_SCORE' works

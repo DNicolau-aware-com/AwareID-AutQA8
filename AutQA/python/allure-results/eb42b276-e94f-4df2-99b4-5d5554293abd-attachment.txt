@@ -1,0 +1,22 @@
+
+================================================================================
+?? POST /documentVerification/validateDocumentType
+?? Request Body:
+{
+  "documentImage": {
+    "lightingScheme": 6,
+    "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4QA0RXhpZgAATU0AKgAAAA... (truncated, length: 646810)"
+  }
+}
+[INFO] POST https://qa8.awareid.com/documentVerification/validateDocumentType
+
+?? Response Status: 400
+?? Response Body:
+{
+  "errorCode": "INVALID_INPUT",
+  "errorMsg": "Document input is invalid",
+  "status": 400,
+  "timestamp": "2026-02-09 22:45:35.846"
+}
+================================================================================
+

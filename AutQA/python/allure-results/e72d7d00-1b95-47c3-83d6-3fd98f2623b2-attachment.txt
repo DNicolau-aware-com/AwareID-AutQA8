@@ -1,0 +1,23 @@
+
+================================================================================
+?? POST /documentVerification/verifyDocumentsAndBiometrics
+?? Request Body:
+{
+  "biometricsInfo": {
+    "facialImage": {
+      "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/4QA0RXhpZgAATU0AKgAAAA... (truncated, length: 285092)"
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/documentVerification/verifyDocumentsAndBiometrics
+
+?? Response Status: 400
+?? Response Body:
+{
+  "errorCode": "INVALID_INPUT",
+  "errorMsg": "Document input is invalid",
+  "status": 400,
+  "timestamp": "2026-02-09 22:45:42.364"
+}
+================================================================================
+

@@ -1,0 +1,7 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+Error response: {'errorCode': 'INTERNAL_SERVER_ERROR', 'errorMsg': "Validation failed for argument [0] in public org.springframework.http.ResponseEntity<java.lang.String> com.aware.indigo.onboarding.controller.EnrollmentController.enroll(com.aware.indigo.onboarding.dto.EnrollmentRequest) throws com.aware.indigo.awareidcommon.exception.IndigoException: [Field error in object 'enrollmentRequest' on field 'email': rejected value [null]; codes [NotBlank.enrollmentRequest.email,NotBlank.email,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [enrollmentRequest.email,email]; arguments []; default message [email]]; default message [Email is required]] ", 'status': 500, 'timestamp': '2026-02-10 03:29:11'}
+   errorCode: INTERNAL_SERVER_ERROR
+   errorMsg: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<java.lang.Strin

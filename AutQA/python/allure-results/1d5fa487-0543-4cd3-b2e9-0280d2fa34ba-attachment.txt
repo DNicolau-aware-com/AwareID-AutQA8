@@ -1,0 +1,12 @@
+
+============================================================
+COMPLETE ENROLLMENT FLOW
+============================================================
+Username: dantest_20260209_225021_0fd385 | Workflow: charlie4
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+Step 1 - Initiated | Token: 89955193-ca91-4d42-8...
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace
+
+Step 2 - Face added | Fields: ['livenessResult', 'enrollmentStatus', 'registrationCode', 'faceLivenessResults']
+   Registration code: 01d0e447-5615-4f41-971d-15ca5a448020

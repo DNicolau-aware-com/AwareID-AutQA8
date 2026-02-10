@@ -1,0 +1,3 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

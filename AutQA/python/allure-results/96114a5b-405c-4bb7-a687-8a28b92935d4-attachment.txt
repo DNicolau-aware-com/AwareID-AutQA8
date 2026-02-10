@@ -1,0 +1,17 @@
+
+================================================================================
+?? POST /documentVerification/validateDocumentType
+?? Request Body:
+{}
+[INFO] POST https://qa8.awareid.com/documentVerification/validateDocumentType
+
+?? Response Status: 400
+?? Response Body:
+{
+  "errorCode": "INVALID_INPUT",
+  "errorMsg": "Either biometrics or document information is empty",
+  "status": 400,
+  "timestamp": "2026-02-09 22:45:32.192"
+}
+================================================================================
+

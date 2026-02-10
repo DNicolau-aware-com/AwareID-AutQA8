@@ -1,0 +1,3 @@
+[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/analyzeImage
+
+ Detection mode 'FACE_ORDERING_BY_SIZE' works

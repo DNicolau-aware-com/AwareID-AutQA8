@@ -1,0 +1,4 @@
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
+
+Enrolled with all fields | Token: d45be075-9fd8-4965-9...
+[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

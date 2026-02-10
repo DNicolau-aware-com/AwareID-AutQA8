@@ -1,0 +1,29 @@
+
+================================================================================
+?? POST /nexaface/compare
+?? Request Body:
+{
+  "probe": {
+    "VISIBLE_FRONTAL": "/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAA... (truncated, length: 266552)"
+  },
+  "workflow": {
+    "comparator": {
+      "algorithm": "F500",
+      "faceTypes": [
+        "VISIBLE_FRONTAL"
+      ]
+    }
+  }
+}
+[INFO] POST https://qa8.awareid.com/nexaface/compare
+
+?? Response Status: 400
+?? Response Body:
+{
+  "error": {
+    "code": -3,
+    "description": "Required field \"gallery\" is missing."
+  }
+}
+================================================================================
+
