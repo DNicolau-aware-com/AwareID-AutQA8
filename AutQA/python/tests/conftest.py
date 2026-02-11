@@ -1,4 +1,4 @@
-"""
+﻿"""
 Pytest configuration and fixtures.
 Provides shared fixtures for all tests including API clients,
 test data, and authentication tokens.
@@ -44,7 +44,10 @@ def pytest_configure(config):
     Automatically refreshes JWT token if expired or about to expire.
     """
     if not FRAMEWORK_AVAILABLE:
+        print("[WARNING] Framework not available - skipping JWT refresh")
         return
+    
+    # Framework available - proceed with JWT refresh
     
     try:
         from generated.retrieve_token import retrieve_token
@@ -298,3 +301,4 @@ def pytest_runtest_logreport(report):
     #     print(f"[ADMIN REPORT] Warning: Failed to send to portal: {e}")
     
     return status_info
+
