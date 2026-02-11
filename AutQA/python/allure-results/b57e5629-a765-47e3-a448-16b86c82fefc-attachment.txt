@@ -1,5 +1,0 @@
-[INFO] POST https://qa8.awareid.com/faceliveness/checkLiveness
-
-? CheckLiveness with workflow 'charlie4' successful!
-  Liveness Result: None
-  Liveness Score: None

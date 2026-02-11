@@ -1,6 +1,0 @@
-[INFO] GET https://qa8.awareid.com/b2c/sdk/preface/version
-
-? Preface version response format is valid
-  Content-Type: application/json
-  Version length: 52 characters
-  Version: Aware KnomiFaceAnalyzer Library, version 7.2 r171747

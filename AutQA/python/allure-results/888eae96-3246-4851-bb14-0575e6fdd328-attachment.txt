@@ -1,3 +1,0 @@
-[INFO] POST https://qa8.awareid.com/faceliveness/analyzeEncrypted
-
-  Non-JSON error response: Required field "key" is missing.

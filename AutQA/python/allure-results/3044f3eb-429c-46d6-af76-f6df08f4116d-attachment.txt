@@ -1,5 +1,0 @@
-[INFO] GET https://qa8.awareid.com/b2c/sdk/preface/version
-
-? Preface SDK version retrieved successfully!
-  Version: Aware KnomiFaceAnalyzer Library, version 7.2 r171747
-  Version Number: 7.2 r171747

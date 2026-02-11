@@ -1,3 +1,0 @@
-[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /faceliveness/analyzeEncrypted returned 500, retrying in 1.0s... (attempt 1/3)
-[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /faceliveness/analyzeEncrypted returned 500, retrying in 1.0s... (attempt 2/3)
-[31m[1mERROR   [0m autqa.core.http_client:http_client.py:223 POST /faceliveness/analyzeEncrypted failed after 3 attempts: 500 {"error":{"code":-1,"description":"OpenSSL Error: error:03000082:digital envelope routines::invalid key length\nPlease double check that you are using the correct encryption parameters, and using matc

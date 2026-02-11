@@ -1,6 +1,0 @@
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-
-Full response: {'enrollmentToken': 'e756ad20-2f1f-4d3a-b491-03a5e40ae9e0', 'userExistsAlready': False, 'requiredChecks': ['addFace'], 'recordVideo': False}
-
-requiredChecks: ['addFace']
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

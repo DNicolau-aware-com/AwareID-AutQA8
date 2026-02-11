@@ -1,4 +1,0 @@
-[INFO] POST https://qa8.awareid.com/b2c/sdk/documentVerification/validateDocumentType
-
- Response structure is valid
-  Content-Type: application/json

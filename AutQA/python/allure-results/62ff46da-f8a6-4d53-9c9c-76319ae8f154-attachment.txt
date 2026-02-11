@@ -1,7 +1,0 @@
-[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/calculateROI
-
- ROI calculated successfully for 480x640 resolution!
-  Region of Interest:
-    Origin: (62, 32)
-    Size: 356 x 512 pixels
-    Area: 182272 square pixels

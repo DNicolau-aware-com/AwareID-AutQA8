@@ -1,3 +1,0 @@
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/addFace

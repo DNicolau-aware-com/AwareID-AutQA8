@@ -1,2 +1,0 @@
-[INFO] GET https://qa8.awareid.com/faceliveness/version
-? Face Liveness version: Aware FaceLiveness Server, version 4.22 r184010

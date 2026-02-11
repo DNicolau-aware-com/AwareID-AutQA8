@@ -1,3 +1,0 @@
-[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/cancel returned 500, retrying in 1.0s... (attempt 1/3)
-[33mWARNING [0m autqa.core.http_client:http_client.py:216 POST /onboarding/enrollment/cancel returned 500, retrying in 1.0s... (attempt 2/3)
-[1m[31mERROR   [0m autqa.core.http_client:http_client.py:223 POST /onboarding/enrollment/cancel failed after 3 attempts: 500 {"errorCode":"INTERNAL_SERVER_ERROR","errorMsg":"not valid token (a038b745-4c51-4ccd-b974-205b4cc67e76)","status":500,"timestamp":"2026-02-10 03:52:17"}

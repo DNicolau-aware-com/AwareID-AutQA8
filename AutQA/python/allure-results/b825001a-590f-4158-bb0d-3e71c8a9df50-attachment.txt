@@ -1,7 +1,0 @@
-[INFO] POST https://qa8.awareid.com/b2c/sdk/preface/analyzeImage
-
- Image analyzed successfully!
-  Image ID: test_image_1
-  Faces detected: 1
-  Is compliant: False
-  Metrics analyzed: 14

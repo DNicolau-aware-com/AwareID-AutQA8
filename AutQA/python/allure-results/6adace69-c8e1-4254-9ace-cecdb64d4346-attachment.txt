@@ -1,7 +1,0 @@
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-
-Status: 500
-errorCode: INTERNAL_SERVER_ERROR
-errorMsg: Validation failed for argument [0] in public org.springframework.http.ResponseEntity<java.lang.Strin

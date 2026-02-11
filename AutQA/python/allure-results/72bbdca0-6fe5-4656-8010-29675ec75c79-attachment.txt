@@ -1,3 +1,0 @@
-[INFO] POST https://qa8.awareid.com/b2c/sdk/documentVerification/validateDocumentType
-
- Lighting scheme 1 works

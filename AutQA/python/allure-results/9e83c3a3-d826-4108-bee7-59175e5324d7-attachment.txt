@@ -1,9 +1,0 @@
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-
-Response fields present: ['enrollmentToken', 'userExistsAlready', 'requiredChecks', 'recordVideo']
-   PRESENT: enrollmentToken: 3361a072-54dd-4388-8fcd-0ad0e47fd582
-   MISSING: reEnrollmentToken
-   PRESENT: userExistsAlready: False
-   PRESENT: recordVideo: False
-   PRESENT: requiredChecks: ['addFace']
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel

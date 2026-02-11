@@ -1,5 +1,0 @@
-[INFO] POST https://qa8.awareid.com/faceliveness/checkLiveness
-
-? CheckLiveness with metadata successful!
-  User: test_user
-  Device: Apple iPhone 13

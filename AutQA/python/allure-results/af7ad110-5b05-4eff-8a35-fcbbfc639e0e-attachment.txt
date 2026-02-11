@@ -1,6 +1,0 @@
-[INFO] POST https://qa8.awareid.com/faceliveness/checkLiveness
-
-? CheckLiveness with multiple frames successful!
-  Frames Processed: 3
-  Liveness Result: None
-  Liveness Score: None

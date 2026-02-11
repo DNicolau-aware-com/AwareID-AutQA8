@@ -1,8 +1,0 @@
-
->>> REQUEST: POST /onboarding/enrollment/enroll
->>> PAYLOAD: {'username': 'TroyKohler', 'email': 'TroyKohler@mireya.netinfo', 'firstName': 'Troy', 'lastName': 'Kohler', 'phoneNumber': '+17742961793'}
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/enroll
-
-<<< STATUS:   200
-<<< RESPONSE: {'enrollmentToken': 'cd26e31d-0a74-4054-b773-42e0e725eab3', 'userExistsAlready': False, 'requiredChecks': ['addFace'], 'recordVideo': False}
-[INFO] POST https://qa8.awareid.com/onboarding/enrollment/cancel
