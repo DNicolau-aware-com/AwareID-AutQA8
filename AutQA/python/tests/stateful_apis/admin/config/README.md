@@ -17,14 +17,14 @@ This test suite provides comprehensive coverage of all admin configuration setti
 tests/stateful_apis/admin/config/
 ├── README.md                           # This file
 ├── conftest.py                         # Test fixtures and delays
-├── test_complete_suite.py              # ⭐ Main test suite (ALL tests)
-├── test_document_simple.py             # Document-specific tests
-├── test_age_estimation.py              # Age verification tests
-├── test_duplicate_prevention.py        # Duplicate detection tests
-├── test_enrollment_toggles.py          # Enrollment toggle tests
-├── test_other_parameters.py            # System parameter tests
-├── test_preset_configs.py              # Preset configuration tests
-├── test_dependency_rules.py            # Dependency validation tests
+├── test_admin_config_complete_suite.py              # ⭐ Main test suite (ALL tests)
+├── test_admin_document_settings.py             # Document-specific tests
+├── test_admin_age_estimation.py              # Age verification tests
+├── test_admin_duplicate_prevention.py        # Duplicate detection tests
+├── test_admin_enrollment_toggles.py          # Enrollment toggle tests
+├── test_admin_system_parameters.py            # System parameter tests
+├── test_admin_preset_configurations.py              # Preset configuration tests
+├── test_admin_config_dependencies.py            # Dependency validation tests
 └── test_all_toggles.py                 # Toggle test templates
 ```
 
@@ -33,19 +33,19 @@ tests/stateful_apis/admin/config/
 ### Run All Tests
 ```powershell
 # Run complete suite and open HTML report in Edge
-pytest tests/stateful_apis/admin/config/test_complete_suite.py -v --html=admin_report.html --self-contained-html; start msedge admin_report.html
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py -v --html=admin_report.html --self-contained-html; start msedge admin_report.html
 ```
 
 ### Run Specific Category
 ```powershell
 # Document tests only
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSettings -v --html=document_report.html --self-contained-html
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDocumentSettings -v --html=document_report.html --self-contained-html
 
 # Age estimation tests only
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestAgeEstimation -v --html=age_report.html --self-contained-html
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestAgeEstimation -v --html=age_report.html --self-contained-html
 
 # Enrollment toggles only
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestEnrollmentToggles -v --html=enrollment_report.html --self-contained-html
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestEnrollmentToggles -v --html=enrollment_report.html --self-contained-html
 ```
 
 ### Run by Marker
@@ -89,7 +89,7 @@ pytest -m "not dependencies" -v
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSettings::test_set_ocr_portrait_threshold -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDocumentSettings::test_set_ocr_portrait_threshold -v
 ```
 
 ### 2. Age Estimation (TestAgeEstimation)
@@ -101,7 +101,7 @@ pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSett
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestAgeEstimation -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestAgeEstimation -v
 ```
 
 ### 3. Duplicate Prevention (TestDuplicatePrevention)
@@ -112,7 +112,7 @@ pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestAgeEstimatio
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDuplicatePrevention -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDuplicatePrevention -v
 ```
 
 ### 4. Enrollment Toggles (TestEnrollmentToggles)
@@ -126,7 +126,7 @@ pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDuplicatePre
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestEnrollmentToggles -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestEnrollmentToggles -v
 ```
 
 ### 5. System Parameters (TestSystemParameters)
@@ -137,7 +137,7 @@ pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestEnrollmentTo
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestSystemParameters -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestSystemParameters -v
 ```
 
 ### 6. Dependency Rules (TestDependencyRules)
@@ -148,7 +148,7 @@ pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestSystemParame
 
 **Example:**
 ```powershell
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDependencyRules -v
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDependencyRules -v
 ```
 
 ## ⚙️ Configuration Dependencies
@@ -256,9 +256,9 @@ Reason: Legitimate configuration issues
 
 ### Sample Output
 ```
-tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSettings::test_set_ocr_portrait_threshold[2.5] PASSED
-tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSettings::test_enable_add_document FAILED
-tests/stateful_apis/admin/config/test_complete_suite.py::TestAgeEstimation::test_set_age_tolerance[2] FAILED
+tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDocumentSettings::test_set_ocr_portrait_threshold[2.5] PASSED
+tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDocumentSettings::test_enable_add_document FAILED
+tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestAgeEstimation::test_set_age_tolerance[2] FAILED
 ```
 
 ## 🐛 Debugging
@@ -278,7 +278,7 @@ pytest tests/stateful_apis/admin/config/ -v -x
 ### Check Specific Test
 ```powershell
 # Run single test with verbose output
-pytest tests/stateful_apis/admin/config/test_complete_suite.py::TestDocumentSettings::test_enable_add_document -vv -s
+pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py::TestDocumentSettings::test_enable_add_document -vv -s
 ```
 
 ### Generate Reports
@@ -300,7 +300,7 @@ pytest tests/stateful_apis/admin/config/ --json-report --json-report-file=report
 ```yaml
 - name: Run Admin Config Tests
   run: |
-    pytest tests/stateful_apis/admin/config/test_complete_suite.py \
+    pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py \
       --html=admin_report.html \
       --self-contained-html \
       -v
@@ -317,7 +317,7 @@ pytest tests/stateful_apis/admin/config/ --json-report --json-report-file=report
 - task: PowerShell@2
   inputs:
     script: |
-      pytest tests/stateful_apis/admin/config/test_complete_suite.py `
+      pytest tests/stateful_apis/admin/config/test_admin_config_complete_suite.py `
         --html=admin_report.html `
         --self-contained-html
 ```
@@ -430,3 +430,4 @@ def test_set_new_parameter(self, api_client):
 **Test Count:** ~60 tests  
 **Coverage:** All admin configuration settings  
 **Status:** Active development (backend issues pending)
+
