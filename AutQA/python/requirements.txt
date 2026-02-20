@@ -1,0 +1,6 @@
+﻿# Testing
+pytest>=7.4.0
+pytest-html>=3.2.0
+
+# Your existing requirements
+requests>=2.28.0

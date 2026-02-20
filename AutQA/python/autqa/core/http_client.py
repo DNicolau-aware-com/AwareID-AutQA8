@@ -1,4 +1,4 @@
-"""
+﻿"""
 HTTP client wrapper with OAuth token support.
 
 Provides a test-friendly, dependency-injectable interface with automatic
@@ -247,6 +247,49 @@ class HttpClient:
         
         raise RuntimeError(f"Request failed unexpectedly: {method} {path}")
 
+
+    def delete(
+        self,
+        path: str,
+        params: Optional[Dict[str, Any]] = None,
+        with_apikey: bool = True,
+        extra_headers: Optional[Dict[str, str]] = None,
+        retry: bool = True,
+    ) -> requests.Response:
+        """
+        Execute DELETE request with OAuth token.
+
+        Args:
+            path: API endpoint path
+            params: Query parameters
+            with_apikey: Whether to include API key in headers
+            extra_headers: Additional headers to include
+            retry: Whether to retry on failure
+
+        Returns:
+            Response object
+        """
+        # Merge auth headers
+        headers = self._get_auth_headers(extra_headers)
+
+        logger.debug(f"DELETE {path} | params={params} | with_apikey={with_apikey}")
+
+        # Use the requests library directly
+        settings = get_settings()
+        url = f"{settings.baseurl}{path}"
+        
+        if self.jwt_token:
+            headers["Authorization"] = f"Bearer {self.jwt_token}"
+        if with_apikey:
+            headers["apikey"] = settings.apikey
+
+        def do_delete():
+            return requests.delete(url, params=params, headers=headers, timeout=self.timeout)
+
+        if retry:
+            return self._execute_with_retry(do_delete, method="DELETE", path=path)
+        else:
+            return do_delete()
     def get_json(self, path: str, **kwargs) -> Dict[str, Any]:
         """Execute GET request and return JSON response."""
         response = self.get(path, **kwargs)
@@ -299,3 +342,4 @@ def get_client(force_reload: bool = False) -> HttpClient:
         _default_client = HttpClient()
     
     return _default_client
+

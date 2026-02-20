@@ -29,3 +29,64 @@ env/
 # OS
 .DS_Store
 Thumbs.db
+
+# Test Automation - Generated Reports
+test_automation/reports/latest/*
+test_automation/reports/archive/*
+!test_automation/reports/latest/.gitkeep
+!test_automation/reports/archive/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Test reports
+*.html
+*_report.html
+admin_config_report.html
+complete_suite_report.html
+age_estimation_report.html
+dependency_tests.html
+test_output.txt
+
+# Test automation outputs
+test_automation/reports/latest/*
+test_automation/reports/archive/*
+!test_automation/reports/latest/.gitkeep
+!test_automation/reports/archive/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+
+# Test reports
+*.html
+*_report.html
+admin_config_report.html
+complete_suite_report.html
+age_estimation_report.html
+dependency_tests.html
+test_output.txt
+
+# Test automation outputs
+test_automation/reports/latest/*
+test_automation/reports/archive/*
+!test_automation/reports/latest/.gitkeep
+!test_automation/reports/archive/.gitkeep
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
