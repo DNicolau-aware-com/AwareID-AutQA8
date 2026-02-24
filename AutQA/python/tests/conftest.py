@@ -302,3 +302,158 @@ def pytest_runtest_logreport(report):
     
     return status_info
 
+
+
+# ==============================================================================
+# DOCUMENT & FACE IMAGE FIXTURES - Based on actual .env variables
+# ==============================================================================
+
+@pytest.fixture
+def document_image_base64(env_vars):
+    """
+    Document front image in base64 format.
+    Priority: TX_DL_FRONT_b64 > DAN_DOC_FRONT > OCR_FRONT
+    """
+    doc_front = (
+        env_vars.get("TX_DL_FRONT_b64") or
+        env_vars.get("DAN_DOC_FRONT") or
+        env_vars.get("OCR_FRONT")
+    )
+    
+    if not doc_front:
+        pytest.skip("No document front image found in .env")
+    
+    if doc_front.startswith('data:'):
+        doc_front = doc_front.split(',')[1]
+    
+    return doc_front
+
+
+@pytest.fixture
+def document_image_rear_base64(env_vars):
+    """
+    Document back image in base64 format.
+    Priority: TX_DL_BACK_b64 > DAN_DOC_BACK > OCR_BACK
+    """
+    doc_back = (
+        env_vars.get("TX_DL_BACK_b64") or
+        env_vars.get("DAN_DOC_BACK") or
+        env_vars.get("OCR_BACK")
+    )
+    
+    if doc_back and doc_back.startswith('data:'):
+        doc_back = doc_back.split(',')[1]
+    
+    return doc_back
+
+
+@pytest.fixture
+def face_image_base64(env_vars):
+    """
+    Face image in base64 format.
+    Priority: TX_DL_FACE_B64 > FACE > OCR_FACE
+    """
+    face = (
+        env_vars.get("TX_DL_FACE_B64") or
+        env_vars.get("FACE") or
+        env_vars.get("OCR_FACE")
+    )
+    
+    if not face:
+        pytest.skip("No face image found in .env")
+    
+    if face.startswith('data:'):
+        face = face.split(',')[1]
+    
+    return face
+
+
+# Individual fixtures for each env variable
+@pytest.fixture
+def spoof_image(env_vars):
+    """SPOOF base64 image"""
+    img = env_vars.get("SPOOF")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def dan_doc_front(env_vars):
+    """DAN_DOC_FRONT base64 image"""
+    img = env_vars.get("DAN_DOC_FRONT")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def dan_doc_back(env_vars):
+    """DAN_DOC_BACK base64 image"""
+    img = env_vars.get("DAN_DOC_BACK")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def face_image(env_vars):
+    """FACE base64 image"""
+    img = env_vars.get("FACE")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def tx_dl_front(env_vars):
+    """TX_DL_FRONT_b64 base64 image"""
+    img = env_vars.get("TX_DL_FRONT_b64")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def tx_dl_back(env_vars):
+    """TX_DL_BACK_b64 base64 image"""
+    img = env_vars.get("TX_DL_BACK_b64")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def tx_dl_face(env_vars):
+    """TX_DL_FACE_B64 base64 image"""
+    img = env_vars.get("TX_DL_FACE_B64")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def ocr_front(env_vars):
+    """OCR_FRONT base64 image"""
+    img = env_vars.get("OCR_FRONT")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def ocr_back(env_vars):
+    """OCR_BACK base64 image"""
+    img = env_vars.get("OCR_BACK")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img
+
+
+@pytest.fixture
+def ocr_face(env_vars):
+    """OCR_FACE base64 image"""
+    img = env_vars.get("OCR_FACE")
+    if img and img.startswith('data:'):
+        return img.split(',')[1]
+    return img

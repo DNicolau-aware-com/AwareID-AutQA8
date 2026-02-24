@@ -1,92 +1,47 @@
-﻿# Python
-__pycache__/
-*.py[cod]
-*.class
-*.so
-.Python
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Allure
-allure-results/
-allure-report/
-
-# IDEs
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Environment
+﻿# Environment files (NEVER commit - contains API keys!)
 .env
-venv/
-env/
+.env.local
+.env.*.local
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Test Automation - Generated Reports
-test_automation/reports/latest/*
-test_automation/reports/archive/*
-!test_automation/reports/latest/.gitkeep
-!test_automation/reports/archive/.gitkeep
+# Test reports
+*.html
+*report.html
+*.xml
+test-results/
+reports/
 
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
 
 # IDE
 .vscode/
 .idea/
 *.swp
+*.swo
+*.sublime-*
 
-# Test reports
-*.html
-*_report.html
-admin_config_report.html
-complete_suite_report.html
-age_estimation_report.html
-dependency_tests.html
-test_output.txt
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# Test automation outputs
-test_automation/reports/latest/*
-test_automation/reports/archive/*
-!test_automation/reports/latest/.gitkeep
-!test_automation/reports/archive/.gitkeep
+# Logs
+*.log
+logs/
 
-# Python
-__pycache__/
-*.pyc
-.pytest_cache/
-
-
-# Test reports
-*.html
-*_report.html
-admin_config_report.html
-complete_suite_report.html
-age_estimation_report.html
-dependency_tests.html
-test_output.txt
-
-# Test automation outputs
-test_automation/reports/latest/*
-test_automation/reports/archive/*
-!test_automation/reports/latest/.gitkeep
-!test_automation/reports/archive/.gitkeep
-
-# Python
-__pycache__/
-*.pyc
-.pytest_cache/
-
+# Temporary files
+*.tmp
+*.temp
+~*
