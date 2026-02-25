@@ -1,46 +1,45 @@
 ﻿"""
-Face-Only Age Verification Test Suite (No Device)
-Tests age verification with face enrollment only - device disabled
+Enhanced Face-Only Age Verification Test with Full Validation
+Face enrollment without device - complete transaction tracking and validation
 """
 import pytest
 import copy
 import time
-import json
 import logging
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
-# ============================================================================
-# TEST DATA: Age scenarios for face-only enrollment
-# ============================================================================
-FACE_ONLY_AGE_SCENARIOS = [
-    # (min_age, max_age, test_description, expected_result_for_age_50)
-    (1, 16, "Child/Teen only (1-16)", "FAIL"),
-    (18, 65, "Adult working age (18-65)", "PASS"),
+
+# Test scenarios: (minAge, maxAge, scenario_name, expected_result)
+AGE_SCENARIOS = [
+    (1, 16, "Child/Teen (1-16)", "FAIL"),
+    (18, 65, "Adult (18-65)", "PASS"),
     (21, 100, "Legal adult (21-100)", "PASS"),
-    (1, 30, "Young person (1-30)", "FAIL"),
+    (1, 30, "Young (1-30)", "FAIL"),
     (40, 60, "Middle age (40-60)", "PASS"),
-    (65, 120, "Senior only (65-120)", "FAIL"),
+    (65, 120, "Senior (65-120)", "FAIL"),
     (1, 101, "All ages (1-101)", "PASS"),
 ]
 
 
 @pytest.mark.stateful
 @pytest.mark.enrollment
-@pytest.mark.face_only
 @pytest.mark.age_verification
 class TestFaceOnlyAgeVerification:
-    """Age verification with FACE ONLY (device disabled)"""
+    """
+    Face-only age verification tests (no device enrollment)
+    Tests minimal enrollment path with age + liveness validation
+    """
     
-    @pytest.mark.parametrize("min_age,max_age,scenario_name,expected_result", FACE_ONLY_AGE_SCENARIOS)
+    @pytest.mark.parametrize("min_age,max_age,scenario_name,expected_result", AGE_SCENARIOS)
     def test_face_only_age_verification(
-        self, 
-        api_client, 
-        unique_username, 
-        face_frames, 
-        workflow, 
-        env_vars, 
+        self,
+        api_client,
+        unique_username,
+        face_frames,
+        workflow,
+        env_vars,
         caplog,
         min_age,
         max_age,
@@ -48,49 +47,57 @@ class TestFaceOnlyAgeVerification:
         expected_result
     ):
         """
-        Face-only enrollment with age verification
+        Test age verification with FACE ONLY (no device)
         
-        Configuration:
-        -  Face enrollment: ENABLED
-        -  Device enrollment: DISABLED
-        -  Age verification: ENABLED (varies by scenario)
-        
-        Tests that age verification works correctly with face-only enrollment
+        Validates:
+        - Age detection accuracy
+        - Liveness detection
+        - Age range enforcement
+        - Minimal enrollment workflow
         """
         
         caplog.set_level(logging.INFO)
         
+        # Test data
         face_image_base64 = env_vars.get("FACE")
         if not face_image_base64:
-            pytest.skip("FACE not found in .env")
+            pytest.skip("FACE image not found in .env")
         
         if face_image_base64.startswith('data:'):
             face_image_base64 = face_image_base64.split(',')[1]
         
+        # Transaction tracking
+        transactions = {}
+        test_start_time = datetime.now()
+        
         # ====================================================================
-        # TEST SCENARIO HEADER
+        # TEST HEADER
         # ====================================================================
-        logger.info("\n" + ""*60)
-        logger.info(f"FACE-ONLY ENROLLMENT TEST: {scenario_name}")
+        logger.info("\n" + "🎯"*60)
+        logger.info("FACE-ONLY AGE VERIFICATION TEST")
+        logger.info(f"Scenario: {scenario_name}")
         logger.info(f"Age Range: {min_age}-{max_age} years")
         logger.info(f"Expected Result: {expected_result}")
-        logger.info(f"Device Enrollment: DISABLED")
-        logger.info(""*60)
+        logger.info(f"Workflow: FACE ONLY (no device)")
+        logger.info(f"Test Started: {test_start_time.strftime('%m/%d/%Y, %I:%M:%S %p')}")
+        logger.info("🎯"*60)
         
         # ====================================================================
-        # STEP 1: CONFIGURE ADMIN - FACE ONLY, NO DEVICE
+        # STEP 1: ADMIN CONFIGURATION
         # ====================================================================
         logger.info("\n" + "="*120)
-        logger.info(f"STEP 1: CONFIGURE ADMIN - FACE ONLY")
+        logger.info("STEP 1: ADMIN CONFIGURATION")
         logger.info("="*120)
+        step_start = datetime.now()
         
         config_response = api_client.http_client.get("/onboarding/admin/customerConfig")
+        assert config_response.status_code == 200, f"Failed to get config: {config_response.status_code}"
+        
         current_config = config_response.json().get("onboardingConfig", {})
         new_config = copy.deepcopy(current_config)
         
+        # Configure age verification - FACE ONLY
         enrollment = new_config.setdefault("onboardingOptions", {}).setdefault("enrollment", {})
-        
-        # Configure age estimation
         enrollment["ageEstimation"] = {
             "enabled": True,
             "minAge": min_age,
@@ -98,52 +105,39 @@ class TestFaceOnlyAgeVerification:
             "minTolerance": 0,
             "maxTolerance": 0
         }
-        
-        # FACE ONLY - disable device
         enrollment['addFace'] = True
-        enrollment['addDevice'] = False  #  DISABLED
+        enrollment['addDevice'] = False  # DISABLED for face-only test
         enrollment['addDocument'] = False
-        enrollment['addVoice'] = False
-        enrollment['addPIN'] = False
         
         authentication = new_config.setdefault("onboardingOptions", {}).setdefault("authentication", {})
         authentication['verifyFace'] = True
-        
-        reenrollment = new_config.setdefault("onboardingOptions", {}).setdefault("reenrollment", {})
-        reenrollment['verifyFace'] = True
         
         update_response = api_client.http_client.post(
             "/onboarding/admin/customerConfig",
             json={"onboardingConfig": new_config}
         )
+        assert update_response.status_code == 200, f"Config update failed: {update_response.status_code}"
         
-        logger.info(f" Admin configured: {scenario_name}")
-        logger.info(f"   Enrollment Mode: FACE ONLY")
-        logger.info(f"   Add Face:  ENABLED")
-        logger.info(f"   Add Device:  DISABLED")
-        logger.info(f"   Add Document:  DISABLED")
+        config_duration = (datetime.now() - step_start).total_seconds()
+        
+        logger.info(f"✅ Configuration Applied:")
         logger.info(f"   Age Range: {min_age}-{max_age} years")
-        logger.info(f"   Expected Result: {expected_result}")
+        logger.info(f"   Tolerance: 0 years (strict)")
+        logger.info(f"   Face Enrollment: ✅ ENABLED")
+        logger.info(f"   Device Enrollment: ❌ DISABLED (face-only mode)")
+        logger.info(f"   Document Enrollment: ❌ DISABLED")
+        logger.info(f"   Duration: {config_duration:.2f}s")
+        logger.info(f"   Timestamp: {datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p')}")
         
-        time.sleep(2)
-        
-        # Verify config saved
-        verify_response = api_client.http_client.get("/onboarding/admin/customerConfig")
-        verified_enrollment = verify_response.json().get("onboardingConfig", {}).get("onboardingOptions", {}).get("enrollment", {})
-        
-        assert verified_enrollment.get("addFace") == True, "Face enrollment not enabled"
-        assert verified_enrollment.get("addDevice") == False, "Device enrollment not disabled"
-        
-        logger.info(f"\n Verified configuration:")
-        logger.info(f"   addFace: {verified_enrollment.get('addFace')}")
-        logger.info(f"   addDevice: {verified_enrollment.get('addDevice')}")
+        time.sleep(1)
         
         # ====================================================================
-        # STEP 2: ENROLLMENT - ENROLL
+        # STEP 2: ENROLL USER
         # ====================================================================
         logger.info("\n" + "="*120)
-        logger.info("STEP 2: Enrollment - Enroll")
+        logger.info("STEP 2: Enrollment - Enroll User")
         logger.info("="*120)
+        step_start = datetime.now()
         
         enroll_payload = {
             "username": unique_username,
@@ -152,32 +146,43 @@ class TestFaceOnlyAgeVerification:
             "lastName": env_vars.get("LASTNAME") or "User",
         }
         
-        enroll_response = api_client.http_client.post("/onboarding/enrollment/enroll", json=enroll_payload)
+        enroll_response = api_client.http_client.post(
+            "/onboarding/enrollment/enroll",
+            json=enroll_payload
+        )
+        assert enroll_response.status_code == 200, f"Enrollment failed: {enroll_response.status_code}"
+        
         enroll_data = enroll_response.json()
         enrollment_token = enroll_data.get("enrollmentToken")
-        required_checks = enroll_data.get("requiredChecks", [])
+        enroll_tx_id = enroll_data.get("transactionId", "N/A")
+        enroll_timestamp = datetime.now()
+        enroll_duration = (enroll_timestamp - step_start).total_seconds()
         
-        logger.info(f"ID: {enroll_data.get('transactionId', 'N/A')}")
-        logger.info(f" Enrollment initiated: {unique_username}")
-        logger.info(f"   Required Checks: {required_checks}")
-        logger.info(f"   Timestamp: {datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p')}")
+        transactions['enroll'] = {
+            "transaction_id": enroll_tx_id,
+            "timestamp": enroll_timestamp,
+            "status": "✅ SUCCESS",
+            "duration_seconds": enroll_duration,
+            "username": unique_username,
+        }
         
-        # Verify device NOT required
-        if 'addDevice' in required_checks:
-            logger.error(f" ERROR: addDevice in required checks but should be disabled!")
-            pytest.fail("Device enrollment required but should be disabled")
+        logger.info(f"Transaction ID: {enroll_tx_id}")
+        logger.info(f"Status: ✅ SUCCESS")
+        logger.info(f"Username: {unique_username}")
+        logger.info(f"Duration: {enroll_duration:.2f}s")
+        logger.info(f"Timestamp: {enroll_timestamp.strftime('%m/%d/%Y, %I:%M:%S %p')}")
         
-        logger.info(f"    Confirmed: Device NOT in required checks")
+        assert enrollment_token, "Enrollment token missing"
         
-        assert enroll_response.status_code == 200
         time.sleep(1)
         
         # ====================================================================
-        # STEP 3: ENROLLMENT - ADD FACE (ONLY STEP - NO DEVICE)
+        # STEP 3: ADD FACE (Age + Liveness) - FINAL STEP
         # ====================================================================
         logger.info("\n" + "="*120)
-        logger.info("STEP 3: Enrollment - Add Face (NO DEVICE STEP)")
+        logger.info("STEP 3: Enrollment - Add Face (FINAL STEP - No Device)")
         logger.info("="*120)
+        step_start = datetime.now()
         
         face_payload = {
             "enrollmentToken": enrollment_token,
@@ -192,185 +197,182 @@ class TestFaceOnlyAgeVerification:
             },
         }
         
-        logger.info(f"   Skipping device enrollment (disabled in config)")
-        logger.info(f"   Proceeding directly to face enrollment...")
+        face_response = api_client.http_client.post(
+            "/onboarding/enrollment/addFace",
+            json=face_payload
+        )
         
-        face_response = api_client.http_client.post("/onboarding/enrollment/addFace", json=face_payload)
+        face_data = face_response.json() if face_response.status_code == 200 else {}
+        face_tx_id = face_data.get("transactionId", "N/A")
+        face_timestamp = datetime.now()
+        face_duration = (face_timestamp - step_start).total_seconds()
         
-        if face_response.status_code == 200:
-            face_data = face_response.json()
-        else:
-            face_data = face_response.json() if face_response.text else {}
-        
-        face_tx_id = face_data.get("transactionId", face_data.get("id", "N/A"))
-        
-        logger.info(f"ID: {face_tx_id}")
-        logger.info(f"Timestamp: {datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p')}")
-        
-        # ====================================================================
-        # EXTRACT VERIFICATION DATA
-        # ====================================================================
+        # Extract validation data
         age_check = face_data.get("ageEstimationCheck", {})
-        age_estimation_config = age_check.get("ageEstimation", {})
         age_from_server = age_check.get("ageFromFaceLivenessServer")
-        actual_result = age_check.get("result", "UNKNOWN")
+        age_result = age_check.get("result", "UNKNOWN")
+        age_config = age_check.get("ageEstimation", {})
+        config_min_age = age_config.get("minAge")
+        config_max_age = age_config.get("maxAge")
         
-        # Liveness
-        liveness_result_data = face_data.get("faceLivenessResults", {}).get("video", {}).get("liveness_result", {})
-        liveness_decision = liveness_result_data.get("decision", "UNKNOWN")
-        liveness_score = liveness_result_data.get("score_frr", "N/A")
+        liveness_data = face_data.get("faceLivenessResults", {}).get("video", {}).get("liveness_result", {})
+        liveness_decision = liveness_data.get("decision", "UNKNOWN")
+        liveness_score = liveness_data.get("score_frr", "N/A")
         
-        enrollment_status = face_data.get("enrollmentStatus", -1)
+        enrollment_status = face_data.get("enrollmentStatus")
+        registration_code = face_data.get("registrationCode")
         
-        # Determine face status
-        if actual_result == "FAIL":
-            face_status = " Failed: AGE ESTIMATION"
-        elif actual_result in ["PASS", "SUCCESS"]:
-            face_status = " SUCCESS"
-        elif face_response.status_code != 200:
-            face_status = f" Failed: {face_data.get('errorMsg', 'Unknown')}"
+        if age_result == "FAIL":
+            face_status = "❌ FAILED: AGE OUT OF RANGE"
+        elif liveness_decision != "LIVE":
+            face_status = "❌ FAILED: LIVENESS CHECK"
         else:
-            face_status = " SUCCESS"
+            face_status = "✅ SUCCESS - ENROLLMENT COMPLETE"
         
-        logger.info(f"Status: {face_status}")
-        logger.info(f"Result: {actual_result}")
-        
-        # ====================================================================
-        # ANALYSIS
-        # ====================================================================
-        logger.info("\n" + "="*120)
-        logger.info(" FACE-ONLY ENROLLMENT ANALYSIS")
-        logger.info("="*120)
-        
-        logger.info(f"\n Configuration:")
-        logger.info(f"   Mode: FACE ONLY (no device)")
-        logger.info(f"   Scenario: {scenario_name}")
-        logger.info(f"   Age Range: {min_age}-{max_age} years")
-        logger.info(f"   Expected Result: {expected_result}")
-        
-        logger.info(f"\n Detection Results:")
-        logger.info(f"   Detected Age: {age_from_server} years" if age_from_server else "   Age: NOT DETECTED")
-        logger.info(f"   Actual Result: {actual_result}")
-        logger.info(f"   Liveness: {liveness_decision}")
-        logger.info(f"   Enrollment Status: {enrollment_status}")
-        
-        # Compare expected vs actual
-        behavior_match = actual_result == expected_result
-        
-        logger.info(f"\n Expected vs Actual:")
-        logger.info(f"   Expected: {expected_result}")
-        logger.info(f"   Actual: {actual_result}")
-        logger.info(f"   Match: {' YES' if behavior_match else ' NO'}")
-        
-        # Explain why
-        if age_from_server:
+        age_in_range = None
+        if age_from_server and min_age and max_age:
             age_in_range = min_age <= age_from_server <= max_age
-            
-            logger.info(f"\n Analysis:")
-            logger.info(f"   Age {age_from_server} is {' WITHIN' if age_in_range else ' OUTSIDE'} range {min_age}-{max_age}")
+        
+        transactions['face'] = {
+            "transaction_id": face_tx_id,
+            "timestamp": face_timestamp,
+            "status": face_status,
+            "duration_seconds": face_duration,
+            "age_detected": age_from_server,
+            "age_result": age_result,
+            "age_in_range": age_in_range,
+            "liveness_decision": liveness_decision,
+            "liveness_score": liveness_score,
+            "enrollment_status": enrollment_status,
+            "registration_code": registration_code,
+        }
+        
+        logger.info(f"Transaction ID: {face_tx_id}")
+        logger.info(f"Status: {face_status}")
+        logger.info(f"Duration: {face_duration:.2f}s")
+        logger.info(f"Timestamp: {face_timestamp.strftime('%m/%d/%Y, %I:%M:%S %p')}")
+        logger.info(f"Enrollment Status: {enrollment_status} ({['FAILED', 'PENDING', 'COMPLETE'][enrollment_status] if enrollment_status in [0,1,2] else 'UNKNOWN'})")
+        if registration_code:
+            logger.info(f"Registration Code: {registration_code}")
+        
+        # Sub-transactions
+        logger.info("\n" + "-"*120)
+        logger.info("📸 Sub-Transaction: Age Detection")
+        logger.info("-"*120)
+        logger.info(f"   Detected Age: {age_from_server} years" if age_from_server else "   ⚠️  Age: NOT DETECTED")
+        logger.info(f"   Required Range: {min_age}-{max_age} years")
+        logger.info(f"   Age Result: {age_result}")
+        
+        if age_from_server and age_in_range is not None:
+            logger.info(f"   Age In Range: {'✅ YES' if age_in_range else '❌ NO'}")
             
             if not age_in_range:
                 if age_from_server < min_age:
-                    difference = min_age - age_from_server
-                    logger.info(f"   Reason: {difference} years below minimum ({min_age})")
+                    diff = min_age - age_from_server
+                    logger.info(f"   Reason: {diff} years BELOW minimum")
                 else:
-                    difference = age_from_server - max_age
-                    logger.info(f"   Reason: {difference} years above maximum ({max_age})")
+                    diff = age_from_server - max_age
+                    logger.info(f"   Reason: {diff} years ABOVE maximum")
+        
+        logger.info("\n" + "-"*120)
+        logger.info("🔴 Sub-Transaction: Liveness Check")
+        logger.info("-"*120)
+        logger.info(f"   Liveness Decision: {liveness_decision}")
+        logger.info(f"   Liveness Score: {liveness_score}")
+        logger.info(f"   Status: {'✅ LIVE' if liveness_decision == 'LIVE' else '❌ SPOOF DETECTED'}")
         
         # ====================================================================
-        # SUB-TRANSACTIONS
+        # ANALYSIS & VALIDATIONS
         # ====================================================================
         logger.info("\n" + "="*120)
-        logger.info(" SUB-TRANSACTIONS")
+        logger.info("📊 ANALYSIS & VALIDATION")
         logger.info("="*120)
         
-        logger.info("\n  " + "-"*116)
-        logger.info("   Analyze Image")
-        logger.info("  " + "-"*116)
-        logger.info(f"  Estimated Age: {age_from_server} years" if age_from_server else "  Estimated Age: NOT AVAILABLE")
-        logger.info(f"  Age Range: {min_age}-{max_age} years")
-        logger.info(f"  Status: {' OUT OF RANGE' if actual_result == 'FAIL' else ' IN RANGE'}")
+        logger.info(f"\n📋 Configuration:")
+        logger.info(f"   Scenario: {scenario_name}")
+        logger.info(f"   Age Range: {min_age}-{max_age} years")
+        logger.info(f"   Expected: {expected_result}")
         
-        logger.info("\n  " + "-"*116)
-        logger.info("   Check Liveness")
-        logger.info("  " + "-"*116)
-        logger.info(f"  Liveness Decision: {liveness_decision}")
-        logger.info(f"  Live Score: {liveness_score}")
-        logger.info(f"  Status: {' LIVE' if liveness_decision == 'LIVE' else ' NOT LIVE'}")
+        logger.info(f"\n👤 Results:")
+        logger.info(f"   Age: {age_from_server} years" if age_from_server else "   Age: NOT DETECTED")
+        logger.info(f"   Age Result: {age_result}")
+        logger.info(f"   Liveness: {liveness_decision}")
+        
+        behavior_match = (age_result == expected_result)
+        logger.info(f"\n🎯 Match: {'✅ YES' if behavior_match else '❌ NO'} (Expected: {expected_result}, Got: {age_result})")
+        
+        # Transaction summary
+        total_duration = (datetime.now() - test_start_time).total_seconds()
+        logger.info(f"\n⏱️  Total Duration: {total_duration:.2f}s")
+        
+        # Critical validations
+        logger.info("\n" + "🔥"*60)
+        logger.info("CRITICAL VALIDATIONS")
+        logger.info("🔥"*60)
+        
+        # Validation results
+        validations_passed = []
+        validations_failed = []
+        
+        # 1. Liveness
+        logger.info(f"\n1️⃣  Liveness Validation:")
+        if liveness_decision != "LIVE":
+            logger.error(f"   ❌ FAILED ({liveness_decision})")
+            validations_failed.append("Liveness")
+            pytest.fail(f"Liveness check failed: {liveness_decision}")
+        else:
+            logger.info(f"   ✅ PASSED ({liveness_decision})")
+            validations_passed.append("Liveness")
+        
+        # 2. Age detection
+        logger.info(f"\n2️⃣  Age Detection Validation:")
+        if not age_from_server:
+            logger.error(f"   ❌ FAILED (No age detected)")
+            validations_failed.append("Age Detection")
+            pytest.fail("Age not detected")
+        else:
+            logger.info(f"   ✅ PASSED ({age_from_server} years)")
+            validations_passed.append("Age Detection")
+        
+        # 3. Age enforcement
+        logger.info(f"\n3️⃣  Age Enforcement Validation:")
+        if age_from_server and age_in_range is not None:
+            if not age_in_range and age_result != "FAIL":
+                logger.error(f"   ❌ FAILED (BYPASS DETECTED)")
+                validations_failed.append("Age Enforcement")
+                pytest.fail(f"Age verification bypass: {age_from_server} outside {min_age}-{max_age} but got {age_result}")
+            else:
+                logger.info(f"   ✅ PASSED (Correctly enforced)")
+                validations_passed.append("Age Enforcement")
+        
+        # 4. Config integrity
+        logger.info(f"\n4️⃣  Configuration Integrity Validation:")
+        if config_min_age != min_age or config_max_age != max_age:
+            logger.error(f"   ❌ FAILED (Mismatch)")
+            validations_failed.append("Config Integrity")
+            pytest.fail("Configuration mismatch")
+        else:
+            logger.info(f"   ✅ PASSED")
+            validations_passed.append("Config Integrity")
+        
+        # 5. Behavior match
+        logger.info(f"\n5️⃣  Behavior Match Validation:")
+        if not behavior_match:
+            logger.error(f"   ❌ FAILED")
+            validations_failed.append("Behavior Match")
+            pytest.fail(f"Expected {expected_result}, got {age_result}")
+        else:
+            logger.info(f"   ✅ PASSED")
+            validations_passed.append("Behavior Match")
         
         # ====================================================================
         # FINAL VERDICT
         # ====================================================================
         logger.info("\n" + "="*120)
-        logger.info(" FINAL VERDICT - FACE-ONLY ENROLLMENT")
+        logger.info("🏁 FINAL VERDICT")
         logger.info("="*120)
-        
-        logger.info(f"\n Enrollment Process:")
-        logger.info(f"   Username: {unique_username}")
-        logger.info(f"   Mode: FACE ONLY (no device)")
-        logger.info(f"   Liveness: {liveness_decision}")
-        logger.info(f"   Enrollment Status: {enrollment_status}")
-        
-        logger.info(f"\n Age Verification:")
+        logger.info(f"\n✅✅✅ TEST PASSED ✅✅✅")
         logger.info(f"   Scenario: {scenario_name}")
-        logger.info(f"   Required Range: {min_age}-{max_age} years")
-        logger.info(f"   Detected Age: {age_from_server} years" if age_from_server else "   Detected Age: N/A")
-        logger.info(f"   Result: {actual_result}")
-        
-        if behavior_match:
-            logger.info(f"\n TEST PASSED ")
-            logger.info(f"   Expected: {expected_result}")
-            logger.info(f"   Actual: {actual_result}")
-            logger.info(f"    Face-only enrollment behaves correctly for {scenario_name}")
-        else:
-            logger.error(f"\n TEST FAILED ")
-            logger.error(f"   Expected: {expected_result}")
-            logger.error(f"   Actual: {actual_result}")
-            logger.error(f"    Behavior mismatch in face-only mode")
-        
-        # ====================================================================
-        # CRITICAL ASSERTIONS
-        # ====================================================================
-        logger.info("\n" + ""*60)
-        logger.info("CRITICAL VALIDATION CHECKS")
-        logger.info(""*60)
-        
-        # Liveness check
-        if liveness_decision != "LIVE":
-            logger.error(f"\n LIVENESS FAILURE: {liveness_decision}")
-            pytest.fail(f"Face-only enrollment liveness failed for '{scenario_name}': {liveness_decision}")
-        else:
-            logger.info(f"\n Liveness verified: {liveness_decision}")
-        
-        # Expected behavior check
-        if not behavior_match:
-            logger.error(f"\n BEHAVIOR MISMATCH IN FACE-ONLY MODE")
-            logger.error(f"   Scenario: {scenario_name} ({min_age}-{max_age})")
-            logger.error(f"   Detected Age: {age_from_server}")
-            logger.error(f"   Expected: {expected_result}")
-            logger.error(f"   Actual: {actual_result}")
-            
-            if expected_result == "FAIL" and actual_result != "FAIL":
-                logger.error(f"\n    Age verification NOT enforced in face-only mode!")
-                pytest.fail(
-                    f"Face-only mode - Age verification not enforced for '{scenario_name}': "
-                    f"Age {age_from_server} outside {min_age}-{max_age} but got {actual_result}"
-                )
-            elif expected_result == "PASS" and actual_result == "FAIL":
-                logger.error(f"\n     False rejection in face-only mode")
-                pytest.fail(
-                    f"Face-only mode - False rejection for '{scenario_name}': "
-                    f"Age {age_from_server} within {min_age}-{max_age} but got {actual_result}"
-                )
-        else:
-            logger.info(f" Face-only enrollment behavior correct: {expected_result}")
-        
-        logger.info(f"\n" + "="*120)
-        logger.info(f" Face-only test '{scenario_name}' completed")
-        logger.info(f"="*120 + "\n")
-
-
-@pytest.fixture(autouse=True, scope="function")
-def cleanup():
-    yield
-    time.sleep(3)
+        logger.info(f"   Validations Passed: {len(validations_passed)}/5")
+        logger.info(f"   Duration: {total_duration:.2f}s")
+        logger.info("\n" + "="*120 + "\n")

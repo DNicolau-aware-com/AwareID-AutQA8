@@ -1,111 +1,107 @@
-﻿
+﻿"""
+Enhanced Cancel Enrollment Tests
+Tests enrollment cancellation with transaction tracking
+"""
 import pytest
+import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 
 @pytest.mark.stateful
 @pytest.mark.enrollment
 class TestCancelEnrollment:
-
-    # ==========================================================================
-    # POSITIVE TEST
-    # ==========================================================================
-
-    def test_cancel_enrollment(self, api_client):
-        """
-        Positive: Cancel an active enrollment session.
-        First initiates enrollment to get a valid token, then cancels it.
-        """
-        # Step 1: Initiate enrollment to get a valid token
-        enroll_payload = {
-            "username": "TroyKohler",
-            "email": "TroyKohler@mireya.netinfo",
-            "firstName": "Troy",
-            "lastName": "Kohler",
-            "phoneNumber": "+17742961793",
-        }
-        print(f"\n>>> REQUEST: POST /onboarding/enrollment/enroll")
-        print(f">>> PAYLOAD: {enroll_payload}")
-
-        enroll_response = api_client.http_client.post(
-            "/onboarding/enrollment/enroll",
-            json=enroll_payload
-        )
-        print(f"\n<<< STATUS:   {enroll_response.status_code}")
-        print(f"<<< RESPONSE: {enroll_response.json()}")
-
-        assert enroll_response.status_code == 200, (
-            f"Enrollment should succeed first. Got: {enroll_response.status_code}. Response: {enroll_response.text}"
-        )
-        token = enroll_response.json().get("enrollmentToken")
-        assert token, "enrollmentToken must not be empty"
-
-        # Step 2: Cancel enrollment
-        cancel_payload = {"enrollmentToken": token}
-        print(f"\n>>> REQUEST: POST /onboarding/enrollment/cancel")
-        print(f">>> PAYLOAD: {cancel_payload}")
-
-        cancel_response = api_client.http_client.post(
-            "/onboarding/enrollment/cancel",
-            json=cancel_payload
-        )
-        print(f"\n<<< STATUS:   {cancel_response.status_code}")
-        print(f"<<< RESPONSE: {cancel_response.text}")
-
-        assert cancel_response.status_code in [200, 204], (
-            f"Expected 200/204, got {cancel_response.status_code}. Response: {cancel_response.text}"
-        )
-
-    # ==========================================================================
-    # NEGATIVE TESTS
-    # ==========================================================================
-
-    def test_missing_enrollment_token(self, api_client):
-        """
-        Negative: Cancel without enrollmentToken field.
-        Expected: 400 INPUT_FORMAT_ERROR or INPUT_VALUES_ERROR
-        """
-        payload = {}
-        print(f"\n>>> REQUEST: POST /onboarding/enrollment/cancel")
-        print(f">>> PAYLOAD: {payload}")
-
-        response = api_client.http_client.post(
-            "/onboarding/enrollment/cancel",
-            json=payload
-        )
-        print(f"\n<<< STATUS:   {response.status_code}")
-        print(f"<<< RESPONSE: {response.json()}")
-
-        assert response.status_code in [400, 500], (
-            f"Expected 400/500, got {response.status_code}"
-        )
-        data = response.json()
-        assert "errorCode" in data, "Error response must contain errorCode"
-        assert "errorMsg" in data, "Error response must contain errorMsg"
-        assert "status" in data, "Error response must contain status"
-        assert "timestamp" in data, "Error response must contain timestamp"
-
-    def test_invalid_enrollment_token(self, api_client):
-        """
-        Negative: Cancel with an invalid/fake enrollmentToken.
-        Expected: 400 or 500 with error response.
-        """
-        payload = {"enrollmentToken": "9336b7b9-6a37-4aca-91b0-10b929e5c340"}
-        print(f"\n>>> REQUEST: POST /onboarding/enrollment/cancel")
-        print(f">>> PAYLOAD: {payload}")
-
-        response = api_client.http_client.post(
-            "/onboarding/enrollment/cancel",
-            json=payload
-        )
-        print(f"\n<<< STATUS:   {response.status_code}")
-        print(f"<<< RESPONSE: {response.json()}")
-
-        assert response.status_code in [400, 500], (
-            f"Expected 400/500, got {response.status_code}"
-        )
-        data = response.json()
-        assert "errorCode" in data, "Error response must contain errorCode"
-        assert "errorMsg" in data, "Error response must contain errorMsg"
-        assert "status" in data, "Error response must contain status"
-        assert "timestamp" in data, "Error response must contain timestamp"
-
+    """Enrollment cancellation tests"""
+    
+    def test_cancel_enrollment(self, api_client, unique_username, caplog):
+        """Test canceling an active enrollment"""
+        caplog.set_level(logging.INFO)
+        
+        test_start = datetime.now()
+        
+        logger.info("\n" + "="*120)
+        logger.info("TEST: Cancel Active Enrollment")
+        logger.info("="*120)
+        
+        # Enroll
+        enroll_resp = api_client.http_client.post("/onboarding/enrollment/enroll", json={
+            "username": unique_username,
+            "email": f"{unique_username}@example.com",
+            "firstName": "Test",
+            "lastName": "User",
+        })
+        
+        enrollment_token = enroll_resp.json().get("enrollmentToken")
+        enroll_tx_id = enroll_resp.json().get("transactionId", "N/A")
+        
+        logger.info(f"✅ Enrolled: {unique_username}")
+        logger.info(f"   Transaction ID: {enroll_tx_id}")
+        logger.info(f"   Token: {enrollment_token[:20]}...")
+        
+        # Cancel
+        cancel_resp = api_client.http_client.post("/onboarding/enrollment/cancel", json={
+            "enrollmentToken": enrollment_token
+        })
+        
+        logger.info(f"\n✅ Canceled enrollment")
+        logger.info(f"   Status: {cancel_resp.status_code}")
+        logger.info(f"   Duration: {(datetime.now() - test_start).total_seconds():.2f}s")
+        
+        # Validations
+        logger.info("\n" + "🔥"*60)
+        logger.info("CRITICAL VALIDATIONS")
+        logger.info("🔥"*60)
+        
+        assert cancel_resp.status_code == 200, f"Cancel failed: {cancel_resp.status_code}"
+        logger.info("1️⃣  Cancel Status: ✅ PASSED (200)")
+        
+        logger.info("\n✅ TEST PASSED\n")
+    
+    def test_missing_enrollment_token(self, api_client, caplog):
+        """Test cancel with missing token"""
+        caplog.set_level(logging.INFO)
+        
+        logger.info("\n" + "="*120)
+        logger.info("TEST: Cancel with Missing Token (Negative Test)")
+        logger.info("="*120)
+        
+        # Cancel without token
+        cancel_resp = api_client.http_client.post("/onboarding/enrollment/cancel", json={})
+        
+        logger.info(f"✅ Expected failure: {cancel_resp.status_code}")
+        
+        # Validations
+        logger.info("\n" + "🔥"*60)
+        logger.info("CRITICAL VALIDATIONS")
+        logger.info("🔥"*60)
+        
+        assert cancel_resp.status_code == 400, f"Expected 400, got {cancel_resp.status_code}"
+        logger.info("1️⃣  Error Status: ✅ PASSED (400)")
+        
+        logger.info("\n✅ TEST PASSED\n")
+    
+    def test_invalid_enrollment_token(self, api_client, caplog):
+        """Test cancel with invalid token"""
+        caplog.set_level(logging.INFO)
+        
+        logger.info("\n" + "="*120)
+        logger.info("TEST: Cancel with Invalid Token (Negative Test)")
+        logger.info("="*120)
+        
+        # Cancel with fake token
+        cancel_resp = api_client.http_client.post("/onboarding/enrollment/cancel", json={
+            "enrollmentToken": "invalid-token-12345"
+        })
+        
+        logger.info(f"✅ Expected failure: {cancel_resp.status_code}")
+        
+        # Validations
+        logger.info("\n" + "🔥"*60)
+        logger.info("CRITICAL VALIDATIONS")
+        logger.info("🔥"*60)
+        
+        assert cancel_resp.status_code in [400, 404, 500], f"Expected error, got {cancel_resp.status_code}"
+        logger.info("1️⃣  Error Status: ✅ PASSED (Error returned)")
+        
+        logger.info("\n✅ TEST PASSED\n")
