@@ -9,6 +9,8 @@
 *.xml
 test-results/
 reports/
+allure-results/
+artifacts/
 
 # Python
 __pycache__/

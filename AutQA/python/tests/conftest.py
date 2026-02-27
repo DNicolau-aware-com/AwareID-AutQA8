@@ -5,8 +5,10 @@ test data, and authentication tokens.
 """
 from __future__ import annotations
 
+import json
 import pytest
 import sys
+from datetime import datetime
 from pathlib import Path
 
 # Add project root to Python path
@@ -113,6 +115,22 @@ def pytest_configure(config):
         print(f"[WARNING] Error during auto token refresh: {e}")
 
 
+def pytest_sessionstart(session):
+    """Store a unique run_id (timestamp) on config for artifact grouping."""
+    session.config._run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """Open the HTML report in the browser automatically after the test session."""
+    import webbrowser
+    from pathlib import Path
+
+    report_path = Path(__file__).parent.parent / "report.html"
+    if report_path.exists():
+        print(f"\n[INFO] Opening HTML report: {report_path}")
+        webbrowser.open(report_path.as_uri())
+
+
 # ==============================================================================
 # SESSION-LEVEL FIXTURES (run once per test session)
 # ==============================================================================
@@ -163,52 +181,77 @@ def env_store():
 # ADMIN PORTAL REPORTING (reports test results to admin API)
 # ==============================================================================
 
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     """
     Pytest hook that runs after each test phase (setup, call, teardown).
-    Reports test results to admin portal API.
+
+    - Stores item.rep_<when> so fixtures can inspect pass/fail status.
+    - On teardown: writes artifacts/<run_id>/<test_name>.json with all
+      HTTP transactions captured by log_api_responses.
+    - Reports test results to admin portal (console only for now).
     """
-    if call.when != "call":
-        # Only report actual test execution, not setup/teardown
-        return
-    
-    try:
-        # Determine test outcome
-        if call.excinfo is None:
-            status = "PASSED"
-            error_msg = None
-        elif call.excinfo.typename == "Skipped":
-            status = "SKIPPED"
-            error_msg = str(call.excinfo.value)
-        else:
-            status = "FAILED"
-            error_msg = str(call.excinfo.value)
-        
-        # Get test details
-        test_name = item.nodeid.split("::")[-1]  # Just the test function name
-        test_file = item.nodeid.split("::")[0]   # File path
-        
-        # TODO: Replace with your actual admin API endpoint
-        # This is where you need to send the test result
-        # Example:
-        # import requests
-        # admin_api_url = "https://your-admin-portal.com/api/test-results"
-        # payload = {
-        #     "test_name": test_name,
-        #     "test_file": test_file,
-        #     "status": status,
-        #     "error": error_msg,
-        #     "timestamp": datetime.now().isoformat()
-        # }
-        # requests.post(admin_api_url, json=payload)
-        
-        print(f"\n[ADMIN REPORT] {test_name}: {status}")
-        if error_msg:
-            print(f"[ADMIN REPORT] Error: {error_msg}")
-            
-    except Exception as e:
-        # Don't fail tests if reporting fails
-        print(f"\n[WARNING] Failed to report to admin portal: {e}")
+    outcome = yield
+    rep = outcome.get_result()
+
+    # Make outcome available to fixtures via item.rep_setup / rep_call / rep_teardown
+    setattr(item, f"rep_{rep.when}", rep)
+
+    # ── Artifact writing (once per test, at the teardown phase) ──────────────
+    if rep.when == "teardown":
+        transactions = getattr(item, "_api_transactions", [])
+        if transactions:
+            run_id = getattr(item.config, "_run_id", "unknown")
+            rep_call = getattr(item, "rep_call", None)
+            if rep_call and rep_call.passed:
+                result = "PASSED"
+            elif rep_call and rep_call.failed:
+                result = "FAILED"
+            elif rep_call and rep_call.skipped:
+                result = "SKIPPED"
+            else:
+                result = "UNKNOWN"
+
+            artifact = {
+                "run_id": run_id,
+                "test": item.nodeid,
+                "result": result,
+                "timestamp": datetime.now().isoformat(),
+                "transactions": transactions,
+            }
+
+            safe_name = (
+                item.nodeid
+                .replace("\\", "_")
+                .replace("/", "_")
+                .replace("::", "__")
+                .replace(".py", "")
+            )
+            artifacts_dir = Path(item.config.rootdir) / "artifacts" / run_id
+            artifacts_dir.mkdir(parents=True, exist_ok=True)
+            artifact_path = artifacts_dir / f"{safe_name}.json"
+            artifact_path.write_text(json.dumps(artifact, indent=2), encoding="utf-8")
+            print(f"\n[ARTIFACT] Written: {artifact_path}")
+
+    # ── Admin portal report (call phase only) ────────────────────────────────
+    if rep.when == "call":
+        try:
+            if call.excinfo is None:
+                status = "PASSED"
+                error_msg = None
+            elif call.excinfo.typename == "Skipped":
+                status = "SKIPPED"
+                error_msg = str(call.excinfo.value)
+            else:
+                status = "FAILED"
+                error_msg = str(call.excinfo.value)
+
+            test_name = item.nodeid.split("::")[-1]
+            print(f"\n[ADMIN REPORT] {test_name}: {status}")
+            if error_msg:
+                print(f"[ADMIN REPORT] Error: {error_msg}")
+        except Exception as e:
+            print(f"\n[WARNING] Failed to report to admin portal: {e}")
 
 
 # ==============================================================================
