@@ -1,23 +1,34 @@
 """Error response structure validation tests."""
 
+import allure
 import pytest
 
 
+@allure.feature("Face Matcher API")
+@allure.story("Error Response Format")
+@allure.title("Error responses contain a structured, machine-readable body")
+@allure.severity(allure.severity_level.NORMAL)
+@allure.description(
+    "Triggers an error by sending an empty payload to /compare. "
+    "Validates that the response body follows one of the two documented error formats:\n"
+    "- Nested: {\"error\": {\"code\": <int>, \"description\": \"<str>\"}}\n"
+    "- Standard: {\"errorCode\": \"...\", \"errorMsg\": \"...\", \"status\": <int>, \"timestamp\": \"...\"}"
+)
 @pytest.mark.stateless
 @pytest.mark.face_matcher
 def test_error_response_structure(api_client, face_matcher_base_path):
     """
     Test that error responses follow the Face Matcher error format.
-    
-    Face Matcher uses a different error format than Face Liveness:
+
+    Face Matcher uses a nested error format:
     {
       "error": {
         "code": -3,
         "description": "Error message"
       }
     }
-    
-    Or standard format:
+
+    Or a standard format:
     {
       "errorCode": "INPUT_FORMAT_ERROR",
       "errorMsg": "...",
@@ -30,59 +41,66 @@ def test_error_response_structure(api_client, face_matcher_base_path):
         f"{face_matcher_base_path}/compare",
         json={}
     )
-    
+
     assert response.status_code in [400, 500]
-    
+
     try:
         error_response = response.json()
-        
-        # Check which error format is used
-        if "error" in error_response:
-            # Nested error format
-            error = error_response["error"]
-            
-            assert "code" in error, "Error must have code"
-            assert "description" in error, "Error must have description"
-            
-            # Validate types
-            assert isinstance(error["code"], int), "code must be integer"
-            assert isinstance(error["description"], str), "description must be string"
-            
-            print(f"\n? Nested error format validated")
-            print(f"  Error Code: {error['code']}")
-            print(f"  Description: {error['description']}")
-            
-        elif "errorCode" in error_response:
-            # Standard error format
-            assert "errorMsg" in error_response, "Error must have errorMsg"
-            assert "status" in error_response, "Error must have status"
-            assert "timestamp" in error_response, "Error must have timestamp"
-            
-            print(f"\n? Standard error format validated")
-            print(f"  Error Code: {error_response['errorCode']}")
-            print(f"  Error Msg: {error_response['errorMsg']}")
-        else:
-            pytest.fail(f"Unknown error format: {error_response}")
-        
     except ValueError:
         pytest.skip(f"Response is not JSON: {response.text[:100]}")
 
+    # Check which error format is used
+    if "error" in error_response:
+        # Nested error format
+        error = error_response["error"]
 
+        assert "code" in error, "Error must have code"
+        assert "description" in error, "Error must have description"
+
+        assert isinstance(error["code"], int), "code must be integer"
+        assert isinstance(error["description"], str), "description must be string"
+
+        print(f"\n[OK] Nested error format validated")
+        print(f"     Error Code: {error['code']}")
+        print(f"     Description: {error['description']}")
+
+    elif "errorCode" in error_response:
+        # Standard error format
+        assert "errorMsg" in error_response, "Error must have errorMsg"
+        assert "status" in error_response, "Error must have status"
+        assert "timestamp" in error_response, "Error must have timestamp"
+
+        print(f"\n[OK] Standard error format validated")
+        print(f"     Error Code: {error_response['errorCode']}")
+        print(f"     Error Msg: {error_response['errorMsg']}")
+
+    else:
+        pytest.fail(f"Unknown error format: {error_response}")
+
+
+@allure.feature("Face Matcher API")
+@allure.story("Error Response Format")
+@allure.title("Endpoint {endpoint} exists and rejects empty payload")
+@allure.severity(allure.severity_level.NORMAL)
+@allure.description(
+    "Verifies that each Face Matcher endpoint is reachable (not 404) and returns "
+    "an appropriate error (400/401/500) when called with an empty JSON body."
+)
 @pytest.mark.stateless
 @pytest.mark.face_matcher
 @pytest.mark.parametrize("endpoint", ["/compare", "/export"])
-def test_endpoints_exist_and_require_auth(api_client, face_matcher_base_path, endpoint):
-    """Test that endpoints exist and are accessible."""
+def test_endpoints_exist_and_reject_empty_payload(api_client, face_matcher_base_path, endpoint):
+    """Test that endpoints exist and return an error for an empty payload."""
     response = api_client.http_client.post(
         f"{face_matcher_base_path}{endpoint}",
         json={}
     )
-    
+
     assert response.status_code != 404, (
         f"Endpoint {endpoint} should exist (got 404)"
     )
-    
-    # Should return error for invalid payload
+
+    # Should return an error for an invalid payload (not a success)
     assert response.status_code in [400, 401, 500], (
         f"Expected 400/401/500 for invalid payload, got {response.status_code}"
     )

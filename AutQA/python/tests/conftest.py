@@ -61,7 +61,7 @@ def pytest_configure(config):
             return  # Silently skip if credentials not available
         
         print("\n" + "="*80)
-        print("?? AUTO TOKEN REFRESH")
+        print("[>>] AUTO TOKEN REFRESH")
         print("="*80)
         print("[INFO] Refreshing JWT token before running tests...")
         
@@ -93,14 +93,18 @@ def pytest_configure(config):
                 lines.append(f"JWT={jwt}")
             
             env_path.write_text("\n".join(lines) + "\n", encoding='utf-8')
-            
-            print(f"[INFO] ? JWT token refreshed successfully!")
-            print(f"[INFO]    Token expires in: {expires_in} seconds")
+
+            # Invalidate settings cache so ApiClient picks up the fresh token
+            from autqa.core import config as _config
+            _config._settings_cache = None
+
+            print(f"[INFO] [OK] JWT token refreshed successfully!")
+            print(f"[INFO]      Token expires in: {expires_in} seconds")
             print("="*80 + "\n")
-            
+
         except Exception as e:
-            print(f"[WARNING] ??  Could not refresh token: {e}")
-            print(f"[WARNING]    Tests may fail if JWT is expired")
+            print(f"[WARNING] Could not refresh token: {e}")
+            print(f"[WARNING] Tests may fail if JWT is expired")
             print("="*80 + "\n")
     
     except ImportError:

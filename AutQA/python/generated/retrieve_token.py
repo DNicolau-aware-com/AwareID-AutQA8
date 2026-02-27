@@ -108,9 +108,9 @@ def retrieve_token(
         if "access_token" not in token_data:
             raise Exception("Response missing 'access_token' field")
         
-        print("[INFO] ✓ Token retrieved successfully")
+        print("[INFO] [OK] Token retrieved successfully")
         if logger:
-            logger.info("✓ Token retrieved successfully")
+            logger.info("[OK] Token retrieved successfully")
             if "expires_in" in token_data:
                 logger.info(f"Token expires in: {token_data['expires_in']}s")
         
@@ -305,10 +305,10 @@ def main() -> None:
     # Validate required settings
     if not all([BASEURL, REALM, CLIENT_ID, CLIENT_SECRET]):
         print("[ERROR] Missing required environment variables:")
-        print(f"  BASEURL:        {'✓' if BASEURL else '✗ MISSING'}")
-        print(f"  REALM_NAME:     {'✓' if REALM else '✗ MISSING'}")
-        print(f"  CLIENT_ID:      {'✓' if CLIENT_ID else '✗ MISSING'}")
-        print(f"  CLIENT_SECRET:  {'✓' if CLIENT_SECRET else '✗ MISSING'}")
+        print(f"  BASEURL:        {'[OK]' if BASEURL else '[MISSING]'}")
+        print(f"  REALM_NAME:     {'[OK]' if REALM else '[MISSING]'}")
+        print(f"  CLIENT_ID:      {'[OK]' if CLIENT_ID else '[MISSING]'}")
+        print(f"  CLIENT_SECRET:  {'[OK]' if CLIENT_SECRET else '[MISSING]'}")
         print(f"\nPlease add these to your .env file: {env_path}")
         sys.exit(1)
     
@@ -424,11 +424,11 @@ def test_retrieve_token(
         if "expires_in" not in token_data:
             result.add_warning("Response missing 'expires_in'")
         
-        logger.info(f"✓ Token retrieval test passed ({result.execution_time:.3f}s)")
-        
+        logger.info(f"[OK] Token retrieval test passed ({result.execution_time:.3f}s)")
+
     except Exception as e:
         result.add_error(str(e))
-        logger.error(f"✗ Token retrieval test failed: {e}")
+        logger.error(f"[FAIL] Token retrieval test failed: {e}")
     
     return result
 
