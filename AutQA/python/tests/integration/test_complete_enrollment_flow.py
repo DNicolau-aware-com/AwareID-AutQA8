@@ -33,19 +33,56 @@ class TestCompleteEnrollmentFlow:
     def test_full_enrollment_flow(self):
         """
         Test complete enrollment flow: initiate -> device -> face -> document.
-        
+
         This is the main enrollment workflow that mimics a real user signup.
         """
+        import copy
+        from client import get as admin_get, post as admin_post
         from generated.initiate_enrollment import initiate_enrollment
         from generated.add_device import add_device
         from generated.add_face import add_face, collect_face_frames
         from generated.add_document_ocr import add_document_ocr, normalize_base64, validate_base64
-        
+
         print("\n" + "=" * 80)
         print("STARTING COMPLETE ENROLLMENT FLOW TEST")
         print("=" * 80)
-        
+
         env = load_env()
+
+        # ======================================================================
+        # STEP 0: CONFIGURE SERVER (face + document required)
+        # ======================================================================
+        print("\n" + "-" * 80)
+        print("STEP 0: CONFIGURE SERVER")
+        print("-" * 80)
+
+        def _enable_face_and_document():
+            # Step 1: authentication.verifyFace
+            r = admin_get("/onboarding/admin/customerConfig")
+            c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+            c.setdefault("onboardingOptions", {}).setdefault("authentication", {})["verifyFace"] = True
+            admin_post("/onboarding/admin/customerConfig", json={"onboardingConfig": c})
+            time.sleep(2)
+            # Step 2: reenrollment.verifyFace
+            r = admin_get("/onboarding/admin/customerConfig")
+            c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+            c.setdefault("onboardingOptions", {}).setdefault("reenrollment", {})["verifyFace"] = True
+            admin_post("/onboarding/admin/customerConfig", json={"onboardingConfig": c})
+            time.sleep(2)
+            # Step 3: enrollment.addFace + addDocument
+            r = admin_get("/onboarding/admin/customerConfig")
+            c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+            enroll = c.setdefault("onboardingOptions", {}).setdefault("enrollment", {})
+            enroll["addFace"] = True
+            enroll["addDocument"] = True
+            enroll["addDevice"] = True
+            c.setdefault("onboardingOptions", {}).setdefault("document", {})["rfid"] = "DISABLED"
+            admin_post("/onboarding/admin/customerConfig", json={"onboardingConfig": c})
+            time.sleep(3)
+
+        _enable_face_and_document()
+        print("✓ Server configured: face + document enabled")
+        time.sleep(2)
         
         # ======================================================================
         # STEP 1: INITIATE ENROLLMENT

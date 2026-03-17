@@ -62,11 +62,22 @@ def test_analyze_encrypted_invalid_encryption_data(api_client, face_liveness_bas
     
     try:
         error = response.json()
-        assert "errorCode" in error
-        assert "errorMsg" in error
-        print(f"\n? Proper error returned for invalid encryption")
-        print(f"  Error Code: {error['errorCode']}")
-        print(f"  Error Msg: {error['errorMsg']}")
+        # Encrypted endpoint may return {"errorCode": ..., "errorMsg": ...}
+        # or {"error": {"code": ..., "description": ...}}
+        has_standard = "errorCode" in error and "errorMsg" in error
+        has_nested = "error" in error and isinstance(error["error"], dict)
+        assert has_standard or has_nested, (
+            f"Expected errorCode/errorMsg or error object in response: {error}"
+        )
+        if has_standard:
+            print(f"\n? Proper error returned for invalid encryption")
+            print(f"  Error Code: {error['errorCode']}")
+            print(f"  Error Msg: {error['errorMsg']}")
+        else:
+            nested = error["error"]
+            print(f"\n? Proper error returned for invalid encryption")
+            print(f"  Error Code: {nested.get('code')}")
+            print(f"  Error Msg: {nested.get('description', '')[:200]}")
     except ValueError:
         print(f"\n  Non-JSON error: {response.text[:200]}")
 

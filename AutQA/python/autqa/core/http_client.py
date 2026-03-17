@@ -13,10 +13,6 @@ from typing import Any, Dict, Optional
 
 import requests
 
-# Re-use your existing request helpers
-from client import get as _get
-from client import post as _post
-
 from autqa.core.config import get_settings
 
 logger = logging.getLogger(__name__)
@@ -39,20 +35,23 @@ class HttpClient:
         retry_delay: float = 1.0,
         timeout: int = 30,
         jwt_token: Optional[str] = None,
+        token_service=None,
     ):
         """
         Initialize HTTP client.
-        
+
         Args:
             max_retries: Maximum number of retry attempts for failed requests
             retry_delay: Delay in seconds between retry attempts
             timeout: Request timeout in seconds
             jwt_token: Optional JWT token (loads from settings if None)
+            token_service: Optional TokenService for automatic token refresh on 401
         """
         self.max_retries = max_retries
         self.retry_delay = retry_delay
         self.timeout = timeout
-        
+        self._token_service = token_service
+
         # Load JWT token from settings if not provided
         if jwt_token is None:
             settings = get_settings()
@@ -73,24 +72,29 @@ class HttpClient:
         self.jwt_token = token
         logger.info("JWT token updated")
     
-    def _get_auth_headers(self, extra_headers: Optional[Dict[str, str]] = None) -> Dict[str, str]:
-        """
-        Build authentication headers.
-        
-        Args:
-            extra_headers: Additional headers to merge
-            
-        Returns:
-            Headers dictionary with authentication
-        """
-        headers = extra_headers.copy() if extra_headers else {}
-        
-        # Add JWT token if available
+    def _build_headers(
+        self,
+        with_apikey: bool = True,
+        extra_headers: Optional[Dict[str, str]] = None,
+        content_type: Optional[str] = None,
+    ) -> Dict[str, str]:
+        """Build complete request headers including auth, apikey, and extras."""
+        settings = get_settings()
+        headers: Dict[str, str] = {}
+        if content_type:
+            headers["Content-Type"] = content_type
+        if with_apikey and settings.apikey:
+            headers["apikey"] = settings.apikey
         if self.jwt_token:
             headers["Authorization"] = f"Bearer {self.jwt_token}"
-            logger.debug("Added JWT token to request headers")
-        
+        if extra_headers:
+            headers.update(extra_headers)
         return headers
+
+    @staticmethod
+    def _build_url(baseurl: str, path: str) -> str:
+        """Construct full URL from base URL and relative path."""
+        return f"{baseurl.rstrip('/')}/{path.lstrip('/')}"
 
     def get(
         self,
@@ -102,40 +106,32 @@ class HttpClient:
     ) -> requests.Response:
         """
         Execute GET request with OAuth token.
-        
+
         Args:
             path: API endpoint path
             params: Query parameters
             with_apikey: Whether to include API key in headers
             extra_headers: Additional headers to include
             retry: Whether to retry on failure
-        
+
         Returns:
             Response object
         """
-        # Merge auth headers
-        headers = self._get_auth_headers(extra_headers)
-        
         logger.debug(f"GET {path} | params={params} | with_apikey={with_apikey}")
-        
-        if retry:
-            return self._execute_with_retry(
-                lambda: _get(
-                    path,
-                    params=params,
-                    with_apikey=with_apikey,
-                    extra_headers=headers,
-                ),
-                method="GET",
-                path=path,
-            )
-        else:
-            return _get(
-                path,
+        settings = get_settings()
+        url = self._build_url(settings.baseurl, path)
+
+        def do_get() -> requests.Response:
+            return requests.get(
+                url,
                 params=params,
-                with_apikey=with_apikey,
-                extra_headers=headers,
+                headers=self._build_headers(with_apikey=with_apikey, extra_headers=extra_headers),
+                timeout=self.timeout,
             )
+
+        if retry:
+            return self._execute_with_retry(do_get, method="GET", path=path)
+        return do_get()
 
     def post(
         self,
@@ -148,7 +144,7 @@ class HttpClient:
     ) -> requests.Response:
         """
         Execute POST request with OAuth token.
-        
+
         Args:
             path: API endpoint path
             json: JSON payload
@@ -156,38 +152,80 @@ class HttpClient:
             with_apikey: Whether to include API key in headers
             extra_headers: Additional headers to include
             retry: Whether to retry on failure
-        
+
         Returns:
             Response object
         """
-        # Merge auth headers
-        headers = self._get_auth_headers(extra_headers)
-        
         logger.debug(
             f"POST {path} | payload_size={len(str(json)) if json else 0} | "
             f"with_apikey={with_apikey}"
         )
-        
-        if retry:
-            return self._execute_with_retry(
-                lambda: _post(
-                    path,
-                    json=json,
-                    params=params,
-                    with_apikey=with_apikey,
-                    extra_headers=headers,
-                ),
-                method="POST",
-                path=path,
-            )
-        else:
-            return _post(
-                path,
+        settings = get_settings()
+        url = self._build_url(settings.baseurl, path)
+
+        def do_post() -> requests.Response:
+            return requests.post(
+                url,
                 json=json,
                 params=params,
-                with_apikey=with_apikey,
-                extra_headers=headers,
+                headers=self._build_headers(
+                    with_apikey=with_apikey,
+                    extra_headers=extra_headers,
+                    content_type="application/json",
+                ),
+                timeout=self.timeout,
             )
+
+        if retry:
+            return self._execute_with_retry(do_post, method="POST", path=path)
+        return do_post()
+
+    def put(
+        self,
+        path: str,
+        json: Optional[Dict[str, Any]] = None,
+        params: Optional[Dict[str, Any]] = None,
+        with_apikey: bool = True,
+        extra_headers: Optional[Dict[str, str]] = None,
+        retry: bool = True,
+    ) -> requests.Response:
+        """
+        Execute PUT request with OAuth token.
+
+        Args:
+            path: API endpoint path
+            json: JSON payload
+            params: Query parameters
+            with_apikey: Whether to include API key in headers
+            extra_headers: Additional headers to include
+            retry: Whether to retry on failure
+
+        Returns:
+            Response object
+        """
+        logger.debug(
+            f"PUT {path} | payload_size={len(str(json)) if json else 0} | "
+            f"with_apikey={with_apikey}"
+        )
+        settings = get_settings()
+        url = self._build_url(settings.baseurl, path)
+
+        def do_put() -> requests.Response:
+            return requests.put(
+                url,
+                json=json,
+                params=params,
+                headers=self._build_headers(
+                    with_apikey=with_apikey,
+                    extra_headers=extra_headers,
+                    content_type="application/json",
+                ),
+                timeout=self.timeout,
+            )
+
+        if retry:
+            return self._execute_with_retry(do_put, method="PUT", path=path)
+        return do_put()
 
     def _execute_with_retry(
         self,
@@ -197,20 +235,29 @@ class HttpClient:
     ) -> requests.Response:
         """Execute request with automatic retry logic."""
         last_exception = None
-        
+        token_refreshed = False
+
         for attempt in range(1, self.max_retries + 1):
             try:
                 response = request_func()
-                
+
                 logger.debug(
                     f"{method} {path} | status={response.status_code} | "
                     f"attempt={attempt}/{self.max_retries}"
                 )
-                
+
+                # On 401, refresh token once and retry immediately
+                if response.status_code == 401 and self._token_service and not token_refreshed:
+                    logger.warning(f"{method} {path} returned 401 - refreshing token and retrying")
+                    token_refreshed = True
+                    new_token = self._token_service.get_token(force_refresh=True)
+                    self.jwt_token = new_token
+                    continue
+
                 # Return successful responses (2xx, 4xx)
                 if response.status_code < 500:
                     return response
-                
+
                 # 5xx errors - retry if we have attempts left
                 if attempt < self.max_retries:
                     logger.warning(
@@ -269,22 +316,18 @@ class HttpClient:
         Returns:
             Response object
         """
-        # Merge auth headers
-        headers = self._get_auth_headers(extra_headers)
-
         logger.debug(f"DELETE {path} | params={params} | with_apikey={with_apikey}")
 
-        # Use the requests library directly
         settings = get_settings()
-        url = f"{settings.baseurl}{path}"
-        
-        if self.jwt_token:
-            headers["Authorization"] = f"Bearer {self.jwt_token}"
-        if with_apikey:
-            headers["apikey"] = settings.apikey
+        url = self._build_url(settings.baseurl, path)
 
-        def do_delete():
-            return requests.delete(url, params=params, headers=headers, timeout=self.timeout)
+        def do_delete() -> requests.Response:
+            return requests.delete(
+                url,
+                params=params,
+                headers=self._build_headers(with_apikey=with_apikey, extra_headers=extra_headers),
+                timeout=self.timeout,
+            )
 
         if retry:
             return self._execute_with_retry(do_delete, method="DELETE", path=path)

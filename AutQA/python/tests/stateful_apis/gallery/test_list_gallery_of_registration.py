@@ -47,6 +47,16 @@ def test_list_gallery_of_registration(api_client, gallery_base_path, env_store):
     reg_code = [c.strip() for c in raw_codes.split(",") if c.strip()][0]
     expected_gallery = [g.strip() for g in raw_galleries.split(",") if g.strip()][0]
 
+    # Validate gallery still exists on the server — skip if stale
+    list_resp = api_client.http_client.get(f"{gallery_base_path}/listGallery")
+    if list_resp.status_code == 200:
+        live_galleries = [g.get("galleryName", g) for g in list_resp.json().get("list", [])]
+        if expected_gallery not in live_galleries:
+            pytest.skip(
+                f"Gallery '{expected_gallery}' no longer exists on the server. "
+                "Re-run test_add_gallery then test_list_gallery to refresh GALLERY_NAMES in .env."
+            )
+
     print(f"\n[INFO] Listing galleries for {reg_code}, expecting '{expected_gallery}'")
 
     response = api_client.http_client.post(

@@ -183,8 +183,18 @@ class TestDocumentFaceAgeVerification:
         age_from_server = age_check.get("ageFromFaceLivenessServer")
         age_result = age_check.get("result", "UNKNOWN")
         
-        liveness_data = face_data.get("faceLivenessResults", {}).get("video", {}).get("liveness_result", {})
-        liveness_decision = liveness_data.get("decision", "UNKNOWN")
+        liveness_data = (
+            face_data.get("faceLivenessResults", {})
+                     .get("video", {})
+                     .get("liveness_result", {})
+        )
+        liveness_decision = liveness_data.get("decision")
+        if liveness_decision is None:
+            flat = face_data.get("livenessResult")
+            if flat is not None:
+                liveness_decision = "LIVE" if flat else "SPOOF"
+            else:
+                liveness_decision = "UNKNOWN"
         liveness_score = liveness_data.get("score_frr", "N/A")
         
         face_status = "❌ FAILED: AGE" if age_result == "FAIL" else "✅ SUCCESS"

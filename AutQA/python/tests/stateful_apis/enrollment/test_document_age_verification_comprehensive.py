@@ -200,8 +200,18 @@ class TestDocumentAgeVerificationComprehensive:
         age_from_server = age_check.get("ageFromFaceLivenessServer")
         age_result = age_check.get("result", "UNKNOWN")
         
-        liveness_data = face_data.get("faceLivenessResults", {}).get("video", {}).get("liveness_result", {})
-        liveness_decision = liveness_data.get("decision", "UNKNOWN")
+        liveness_data = (
+            face_data.get("faceLivenessResults", {})
+                     .get("video", {})
+                     .get("liveness_result", {})
+        )
+        liveness_decision = liveness_data.get("decision")
+        if liveness_decision is None:
+            flat = face_data.get("livenessResult")
+            if flat is not None:
+                liveness_decision = "LIVE" if flat else "SPOOF"
+            else:
+                liveness_decision = "UNKNOWN"
         liveness_score = liveness_data.get("score_frr", "N/A")
         
         age_in_range = None
@@ -353,8 +363,12 @@ class TestDocumentAgeVerificationComprehensive:
         
         # 2. Age Detection
         logger.info(f"\n2️⃣  Age Detection Validation:")
-        assert age_from_server, "Age not detected"
-        logger.info(f"   ✅ PASSED ({age_from_server} years)")
+        if expected_result == "PASS":
+            assert age_from_server, "Age not detected"
+            logger.info(f"   ✅ PASSED ({age_from_server} years)")
+        else:
+            # Server may omit ageFromFaceLivenessServer when enrollment is rejected
+            logger.info(f"   ℹ️  Age: {age_from_server} (enrollment rejected — FAIL expected)")
         
         # 3. Age Enforcement
         logger.info(f"\n3️⃣  Age Enforcement Validation:")

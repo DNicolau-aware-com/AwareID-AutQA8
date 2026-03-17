@@ -18,6 +18,12 @@ import json
 import pytest
 
 
+@pytest.fixture(autouse=True)
+def setup_re_enrollment_config(apply_server_config):
+    """Apply re_enrollment_face config before every re-enrollment test and restore after."""
+    apply_server_config("re_enrollment_face")
+
+
 RE_ENROLLMENT_BASE_PATH = "/onboarding/reEnrollment"
 _ENROLLMENT_BASE_PATH = "/onboarding/enrollment"
 
@@ -71,91 +77,147 @@ def re_enrollment_workflow(env_store):
 # TOKEN FIXTURE
 # ==============================================================================
 
-@pytest.fixture
-def re_enrollment_token(api_client, env_store):
+def _create_re_enrollment_token(api_client, env_store, label: str, verify_face_first: bool = False, enable_add_device: bool = False) -> str:
     """
-    Obtain a fresh reEnrollmentToken by calling /onboarding/enrollment/enroll
-    with an already-enrolled username.
+    Self-contained helper: enroll a fresh user, add their face (saving them to the
+    subject manager), then call /enroll again with the same username to obtain a
+    reEnrollmentToken.  Skips the test on any failure.
 
-    Reads RE_ENROLLMENT_USERNAME from .env (falls back to userEnroll).
-    Email is read from RE_ENROLLMENT_EMAIL, then EMAIL, then defaults to
-    <username>@example.com. firstName/lastName default to 'Test'/'User'.
-
-    Skips if the username is absent or if the server does not return
-    a reEnrollmentToken (i.e., the user is not enrolled yet).
-
-    Required .env keys:
-        RE_ENROLLMENT_USERNAME  — already-enrolled username
-        RE_ENROLLMENT_EMAIL     — (optional) email used during original enrollment
+    Does NOT depend on a pre-existing .env username.  The fresh user is created
+    with a unique name so parallel test runs don't collide.
     """
-    username_key = (
-        "RE_ENROLLMENT_USERNAME"
-        if env_store.get("RE_ENROLLMENT_USERNAME")
-        else "userEnroll"
-    )
-    yield _fetch_re_enrollment_token(api_client, env_store, username_key, "verifyFace")
+    import uuid
 
+    face_image = env_store.get("FACE") or env_store.get("TEST")
+    if not face_image:
+        pytest.skip("FACE not found in .env — required to create a fresh enrolled user")
+    if face_image.startswith("data:"):
+        face_image = face_image.split(",", 1)[1]
 
-def _fetch_re_enrollment_token(api_client, env_store, username_key: str, label: str) -> str:
-    """
-    Internal helper — call /onboarding/enrollment/enroll for an already-enrolled
-    user and return the reEnrollmentToken. Calls pytest.skip on any failure.
-    """
-    username = env_store.get(username_key)
-    if not username:
-        pytest.skip(
-            f"{username_key} not found in .env. "
-            f"Set it to an already-enrolled username:\n"
-            f"  {username_key}=<your_enrolled_username>"
-        )
+    workflow = env_store.get("WORKFLOW") or "charlie4"
+    username = f"retest_{int(time.time())}_{uuid.uuid4().hex[:6]}"
+    email = f"{username}@example.com"
 
-    email = (
-        env_store.get("RE_ENROLLMENT_EMAIL")
-        or env_store.get("EMAIL")
-        or f"{username}@example.com"
-    )
-
-    response = api_client.http_client.post(
+    # Step 1: initial enrollment
+    enroll_resp = api_client.http_client.post(
         f"{_ENROLLMENT_BASE_PATH}/enroll",
+        json={"username": username, "email": email, "firstName": "Test", "lastName": "User"},
+    )
+    if enroll_resp.status_code != 200:
+        pytest.skip(f"[{label}] Could not enroll fresh user '{username}': {enroll_resp.status_code}")
+
+    enrollment_token = enroll_resp.json().get("enrollmentToken")
+    if not enrollment_token:
+        pytest.skip(f"[{label}] No enrollmentToken in /enroll response")
+
+    # Step 2: add face — saves user to subject manager and returns registrationCode
+    now_ms = int(time.time() * 1000)
+    frames = [{"data": face_image, "tags": [], "timestamp": now_ms + i * 30} for i in range(3)]
+    face_resp = api_client.http_client.post(
+        f"{_ENROLLMENT_BASE_PATH}/addFace",
         json={
-            "username": username,
-            "email": email,
-            "firstName": env_store.get("FIRSTNAME") or "Test",
-            "lastName": env_store.get("LASTNAME") or "User",
+            "enrollmentToken": enrollment_token,
+            "faceLivenessData": {
+                "video": {
+                    "meta_data": {"username": username},
+                    "workflow_data": {"workflow": workflow, "frames": frames},
+                }
+            },
         },
     )
-    if response.status_code != 200:
+    if face_resp.status_code != 200:
+        pytest.skip(f"[{label}] addFace failed for '{username}': {face_resp.status_code}")
+
+    registration_code = face_resp.json().get("registrationCode")
+    if not registration_code:
         pytest.skip(
-            f"Could not obtain reEnrollmentToken for {label} '{username}' "
-            f"({response.status_code}): {response.text[:300]}"
+            f"[{label}] No registrationCode returned for '{username}' — "
+            "user not saved to subject manager. Check saveToSubjectManager config."
         )
 
-    data = response.json()
+    print(f"\n[INFO] Fresh enrolled user '{username}' — registrationCode: {registration_code[:20]}...")
+
+    # Step 3: call /enroll again — server should now return reEnrollmentToken
+    re_resp = api_client.http_client.post(
+        f"{_ENROLLMENT_BASE_PATH}/enroll",
+        json={"username": username, "email": email, "firstName": "Test", "lastName": "User"},
+    )
+    if re_resp.status_code != 200:
+        pytest.skip(f"[{label}] Second /enroll call failed for '{username}': {re_resp.status_code}")
+
+    data = re_resp.json()
     token = data.get("reEnrollmentToken")
     if not token:
         pytest.skip(
-            f"reEnrollmentToken not returned for {label} '{username}'. "
-            f"Ensure the user is already enrolled. "
+            f"[{label}] reEnrollmentToken not returned for '{username}'. "
             f"Response keys: {list(data.keys())}"
         )
 
     print(f"\n[INFO] reEnrollmentToken for {label} '{username}': {token[:20]}...")
+
+    # Optional step 4: enable addDevice in the server config (one-change-per-POST rule).
+    # Required for completeReEnroll tests that register a device — without this the
+    # server throws a Hibernate NPE ("null id in ModelRegisteredDevice").
+    if enable_add_device:
+        r = api_client.http_client.get("/onboarding/admin/customerConfig")
+        c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+        c.setdefault("onboardingOptions", {}).setdefault("enrollment", {})["addDevice"] = True
+        r2 = api_client.http_client.post("/onboarding/admin/customerConfig", json={"onboardingConfig": c})
+        if r2.status_code != 200:
+            pytest.skip(f"[{label}] Could not enable addDevice config: {r2.status_code} — {r2.text[:200]}")
+        time.sleep(1)
+        print(f"[INFO] addDevice enabled in config for {label}")
+
+    # Optional step 5: call verifyFace to advance the token to the state required
+    # by completeReEnroll.  The server requires verifyFace to succeed before
+    # completeReEnroll will accept the token ("token not for re-enrollment" otherwise).
+    if verify_face_first:
+        now_ms2 = int(time.time() * 1000)
+        vf_frames = [{"data": face_image, "tags": [], "timestamp": now_ms2 + i * 30} for i in range(3)]
+        vf_resp = api_client.http_client.post(
+            f"{RE_ENROLLMENT_BASE_PATH}/verifyFace",
+            json={
+                "reEnrollmentToken": token,
+                "faceLivenessData": {
+                    "video": {
+                        "meta_data": {"username": username},
+                        "workflow_data": {"workflow": workflow, "frames": vf_frames},
+                    }
+                },
+            },
+        )
+        if vf_resp.status_code != 200:
+            pytest.skip(
+                f"[{label}] verifyFace failed (needed before completeReEnroll): "
+                f"{vf_resp.status_code} — {vf_resp.text[:300]}"
+            )
+        print(f"[INFO] verifyFace passed — token ready for completeReEnroll")
+
     return token
+
+
+@pytest.fixture
+def re_enrollment_token(api_client, env_store):
+    """
+    Obtain a reEnrollmentToken for verifyFace tests.
+
+    Creates a fresh enrolled user inline (enroll + addFace → registrationCode),
+    then calls /enroll again to get the reEnrollmentToken.  Self-contained —
+    does not depend on any pre-existing .env username.
+    """
+    yield _create_re_enrollment_token(api_client, env_store, "verifyFace", verify_face_first=False)
 
 
 @pytest.fixture
 def complete_re_enrollment_token(api_client, env_store):
     """
-    Obtain a fresh reEnrollmentToken for completeReEnroll tests.
+    Obtain a reEnrollmentToken for completeReEnroll tests.
 
-    Reads RE_ENROLLMENT_USERNAME from .env — set it to any already-enrolled user
-    (e.g. dantest_20260302_124405_3bfc82). Calls /enrollment/enroll with that
-    username to get a fresh reEnrollmentToken, then yields it for the test.
-
-    Required .env keys:
-        RE_ENROLLMENT_USERNAME  — already-enrolled username
+    Creates a fresh enrolled user inline (enroll + addFace → registrationCode),
+    calls /enroll again to get the reEnrollmentToken, then calls verifyFace to
+    advance the token to the state required by completeReEnroll.  Self-contained.
     """
-    yield _fetch_re_enrollment_token(api_client, env_store, "RE_ENROLLMENT_USERNAME", "completeReEnroll")
+    yield _create_re_enrollment_token(api_client, env_store, "completeReEnroll", verify_face_first=True, enable_add_device=True)
 
 
 @pytest.fixture

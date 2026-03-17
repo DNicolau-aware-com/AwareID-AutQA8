@@ -1,5 +1,12 @@
 ﻿import pytest
 
+
+@pytest.fixture(autouse=True)
+def setup_enrollment_config(apply_server_config):
+    """Apply enrollment_face_only config before every enrollment test and restore after."""
+    apply_server_config("enrollment_face_only")
+
+
 @pytest.fixture
 def enrollment_token(api_client, unique_username, env_vars):
     payload = {

@@ -71,8 +71,10 @@ def _assert_failure_response(result: dict) -> None:
 @allure.title("triggerEnroll with enrolled username returns 200 SUCCESS")
 @allure.severity(allure.severity_level.CRITICAL)
 @allure.description(
-    "Registers a fresh user with dnicolau.aware@gmail.com (enroll + addFace), "
-    "then sends the minimum payload (username only) to POST /b2c/triggerEnroll. "
+    "Sends username + email (dnicolau.aware@gmail.com) to POST /b2c/triggerEnroll "
+    "for a Keycloak B2C pre-registered user. "
+    "Email is included explicitly because the server may not have it in the "
+    "pre-registration event. "
     "Expects HTTP 200 with status='SUCCESS', a non-empty sessionToken, "
     "sessionCallbackURL, and a base64 qrcodeImage."
 )
@@ -86,7 +88,10 @@ def test_trigger_enroll(
     """Freshly enrolled username → 200 SUCCESS with populated session fields."""
     response = api_client.http_client.post(
         f"{b2c_base_path}/triggerEnroll",
-        json={"username": b2c_enrolled_user["username"]},
+        json={
+            "username": b2c_enrolled_user["username"],
+            "email": b2c_enrolled_user["email"],
+        },
     )
 
     assert response.status_code == 200, (
@@ -213,7 +218,8 @@ def test_trigger_enroll_notify_by_email(
 @allure.title("triggerEnroll 200 SUCCESS response contains all required fields")
 @allure.severity(allure.severity_level.NORMAL)
 @allure.description(
-    "Validates the complete 200 SUCCESS response structure against the API spec: "
+    "Sends username + email to POST /b2c/triggerEnroll and validates the complete "
+    "200 SUCCESS response structure against the API spec: "
     "status='SUCCESS', sessionToken (non-empty string), "
     "sessionCallbackURL (valid URL starting with 'http'), "
     "qrcodeImage (non-trivial base64 PNG, length > 100)."
@@ -228,7 +234,10 @@ def test_trigger_enroll_response_structure(
     """Full response structure validation for a successful triggerEnroll call."""
     response = api_client.http_client.post(
         f"{b2c_base_path}/triggerEnroll",
-        json={"username": b2c_enrolled_user["username"]},
+        json={
+            "username": b2c_enrolled_user["username"],
+            "email": b2c_enrolled_user["email"],
+        },
     )
 
     assert response.status_code == 200, (

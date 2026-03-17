@@ -416,6 +416,7 @@ def test_initiate_enrollment(
 
 
 if __name__ == "__main__":
+    
     # Check if running in test mode
     if "--test" in sys.argv:
         if not FRAMEWORK_AVAILABLE:

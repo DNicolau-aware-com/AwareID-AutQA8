@@ -1,6 +1,13 @@
 ﻿import pytest
 import time
 
+
+@pytest.fixture(autouse=True)
+def ensure_face_enabled_for_admin(apply_server_config):
+    """Ensure face is enabled before each admin config test runs."""
+    apply_server_config("enrollment_face_only")
+
+
 @pytest.fixture(autouse=True, scope="function")
 def delay_between_tests():
     """Add 2 second delay after each test to protect admin portal"""

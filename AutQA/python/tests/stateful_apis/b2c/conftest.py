@@ -54,14 +54,16 @@ def b2c_enrolled_user(env_store):
             "email":    "dnicolau.aware@gmail.com",
         }
     """
-    username = env_store.get("B2C_USERNAME") or env_store.get("RE_ENROLLMENT_USERNAME")
+    username = env_store.get("B2C_USERNAME")
     if not username:
         pytest.skip(
             "B2C_USERNAME not set in .env. "
-            "Set it to an already-enrolled username: B2C_USERNAME=<username>"
+            "Set it to a user registered via the Keycloak B2C pre-registration flow "
+            "(not just enrolled via the enrollment API). "
+            "Example: B2C_USERNAME=<keycloak_preregistered_username>"
         )
 
-    print(f"\n[B2C SETUP] Using enrolled user '{username}' with email {B2C_EMAIL}")
+    print(f"\n[B2C SETUP] Using B2C pre-registered user '{username}' with email {B2C_EMAIL}")
     return {
         "username": username,
         "email": B2C_EMAIL,

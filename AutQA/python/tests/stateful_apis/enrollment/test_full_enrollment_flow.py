@@ -24,7 +24,12 @@ def normalize_base64(data: str) -> str:
 @pytest.mark.enrollment
 class TestFullEnrollmentFlow:
     """Full enrollment flow with all modalities"""
-    
+
+    @pytest.fixture(autouse=True)
+    def setup_document_config(self, apply_server_config):
+        """Override the folder-level autouse: use enrollment_with_document (includes rfid=DISABLED)."""
+        apply_server_config("enrollment_with_document")
+
     def test_full_enrollment_with_all_steps(self, api_client, unique_username, face_frames, workflow, env_vars, caplog):
         """Test full enrollment: enroll + device + face + document"""
         caplog.set_level(logging.INFO)

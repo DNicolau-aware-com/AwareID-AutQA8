@@ -6,6 +6,7 @@ centralized configuration loading from .env file.
 """
 
 import os
+import time
 from typing import Optional, Dict, Any
 from urllib.parse import urljoin
 
@@ -15,6 +16,7 @@ from dotenv import dotenv_values
 
 # --- Environment loading ---
 _DOTENV: Dict[str, str] = dotenv_values()
+_JWT_EXPIRY: Optional[float] = None  # epoch time when JWT expires
 
 
 def _get_env(key_upper: str, alt_keys: tuple = ()) -> Optional[str]:
@@ -97,17 +99,17 @@ def build_url(path: str) -> str:
 def retrieve_token() -> Optional[str]:
     """
     Retrieve OAuth2 access token using client credentials.
-    
+
     Caches token in module-level JWT variable to avoid repeated requests.
     Requires CLIENT_ID, CLIENT_SECRET, REALM, and BASEURL in environment.
-    
+
     Returns:
         Access token string or None if retrieval fails.
     """
-    global JWT
+    global JWT, _JWT_EXPIRY
 
-    # Return cached token if available
-    if JWT:
+    # Return cached token if not expired (refresh 60s early)
+    if JWT and _JWT_EXPIRY and time.time() < _JWT_EXPIRY - 60:
         return JWT
 
     # Validate required configuration
@@ -138,7 +140,9 @@ def retrieve_token() -> Optional[str]:
 
         data_resp = resp.json()
         JWT = data_resp.get("access_token")
-        
+        expires_in = data_resp.get("expires_in", 300)
+        _JWT_EXPIRY = time.time() + expires_in
+
         if JWT:
             print("[INFO] Token retrieved successfully")
             return JWT
@@ -171,9 +175,9 @@ def build_headers(with_apikey: bool = True, extra: Optional[Dict[str, str]] = No
     if with_apikey and APIKEY:
         req_headers["apikey"] = APIKEY
 
-    # Retrieve token if not cached
-    global JWT
-    if not JWT:
+    # Retrieve token if not cached or expired
+    global JWT, _JWT_EXPIRY
+    if not JWT or not _JWT_EXPIRY or time.time() >= _JWT_EXPIRY - 60:
         _ = retrieve_token()
 
     # Add Authorization header if token available

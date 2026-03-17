@@ -4,6 +4,19 @@ Shared fixtures for Document Verification tests.
 
 import pytest
 import json
+import base64
+
+
+def _clean_base64(value: str, label: str) -> str:
+    """Strip data URI prefix and validate base64. Skips test if invalid."""
+    value = value.strip()
+    if value.startswith("data:") and "," in value:
+        value = value.split(",", 1)[1].strip()
+    try:
+        base64.b64decode(value, validate=True)
+    except Exception:
+        pytest.skip(f"{label}: value in .env is not valid base64")
+    return value
 
 
 @pytest.fixture
@@ -14,64 +27,29 @@ def doc_verification_base_path():
 
 @pytest.fixture
 def document_image_base64(env_store):
-    """Get document front image from .env file (OCR_FRONT)."""
-    # Try OCR_FRONT first (new standard)
-    doc_b64 = env_store.get("OCR_FRONT")
-    
-    # Fallback to old variable names if OCR_FRONT not found
+    """Get document front image from .env file (DAN_DOC_FRONT)."""
+    doc_b64 = env_store.get("DAN_DOC_FRONT")
     if not doc_b64:
-        doc_b64 = (
-            env_store.get("TX_DL_FRONT_b64") or
-            env_store.get("TX_DL_FRONT_B64") or
-            env_store.get("DAN_DOC_FRONT")
-        )
-    
-    if not doc_b64:
-        pytest.skip("OCR_FRONT not found in .env file")
-    
-    return doc_b64
+        pytest.skip("DAN_DOC_FRONT not found in .env file")
+    return _clean_base64(doc_b64, "DAN_DOC_FRONT")
 
 
 @pytest.fixture
 def document_image_rear_base64(env_store):
-    """Get document rear image from .env file (OCR_BACK)."""
-    # Try OCR_BACK first (new standard)
-    doc_b64 = env_store.get("OCR_BACK")
-    
-    # Fallback to old variable names if OCR_BACK not found
+    """Get document rear image from .env file (DAN_DOC_BACK)."""
+    doc_b64 = env_store.get("DAN_DOC_BACK")
     if not doc_b64:
-        doc_b64 = (
-            env_store.get("TX_DL_BACK_b64") or
-            env_store.get("TX_DL_BACK_B64") or
-            env_store.get("DAN_DOC_BACK")
-        )
-    
-    # If still not found, fallback to front image
-    if not doc_b64:
-        doc_b64 = env_store.get("OCR_FRONT") or env_store.get("TX_DL_FRONT_b64")
-        if not doc_b64:
-            pytest.skip("OCR_BACK not found in .env file")
-    
-    return doc_b64
+        pytest.skip("DAN_DOC_BACK not found in .env file")
+    return _clean_base64(doc_b64, "DAN_DOC_BACK")
 
 
 @pytest.fixture
 def face_image_base64(env_store):
-    """Get face image from .env file (OCR_FACE) for biometric comparison."""
-    # Try OCR_FACE first (new standard)
-    face_b64 = env_store.get("OCR_FACE")
-    
-    # Fallback to old variable names if OCR_FACE not found
+    """Get face image from .env file (FACE) for biometric comparison."""
+    face_b64 = env_store.get("FACE")
     if not face_b64:
-        face_b64 = (
-            env_store.get("TX_DL_FACE_B64") or
-            env_store.get("FACE")
-        )
-    
-    if not face_b64:
-        pytest.skip("OCR_FACE not found in .env file")
-    
-    return face_b64
+        pytest.skip("FACE not found in .env file")
+    return _clean_base64(face_b64, "FACE")
 
 
 @pytest.fixture(autouse=True)

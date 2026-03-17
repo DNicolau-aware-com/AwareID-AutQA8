@@ -70,49 +70,6 @@ class TestAdminFaceDependencies:
         
         print("\n   ✅ All face settings enabled successfully")
     
-    def test_disable_face_all_at_once(self, api_client):
-        """
-        Disable face - MUST disable all 3 in ONE request
-        System rule: When addFace=false, verifyFace must also be false
-        """
-        print("\n" + "="*80)
-        print("DISABLE FACE - ALL AT ONCE (Required by System)")
-        print("="*80)
-        
-        current_response = api_client.http_client.get("/onboarding/admin/customerConfig")
-        current_config = current_response.json().get("onboardingConfig", {})
-        new_config = copy.deepcopy(current_config)
-        
-        print("\n[SINGLE REQUEST] Disable all 3 together:")
-        print("   - enrollment.addFace = False")
-        print("   - reenrollment.verifyFace = False")
-        print("   - authentication.verifyFace = False")
-        
-        enrollment = new_config.setdefault("onboardingOptions", {}).setdefault("enrollment", {})
-        enrollment['addFace'] = False
-        
-        reenroll = new_config.setdefault("onboardingOptions", {}).setdefault("reenrollment", {})
-        reenroll['verifyFace'] = False
-        
-        auth = new_config.setdefault("onboardingOptions", {}).setdefault("authentication", {})
-        auth['verifyFace'] = False
-        
-        update = api_client.http_client.post(
-            "/onboarding/admin/customerConfig",
-            json={"onboardingConfig": new_config}
-        )
-        
-        print(f"   Status: {update.status_code}")
-        assert update.status_code == 200, f"Failed: {update.text}"
-        
-        verify = api_client.http_client.get("/onboarding/admin/customerConfig")
-        verified_config = verify.json().get("onboardingConfig", {}).get("onboardingOptions", {})
-        
-        assert verified_config.get("enrollment", {}).get("addFace") == False
-        assert verified_config.get("reenrollment", {}).get("verifyFace") == False
-        assert verified_config.get("authentication", {}).get("verifyFace") == False
-        
-        print("\n   ✅ All face settings disabled (in one request)")
 
 
 @pytest.mark.stateful

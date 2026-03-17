@@ -37,7 +37,9 @@ def test_validate_document_type_with_valid_document(api_client, doc_verification
             
             if error_code == "OCR_PROCESSING_ERROR" or "invalid" in error_msg:
                 pytest.skip("Document image is not valid for Document Verification API")
-        except:
+        except pytest.skip.Exception:
+            raise
+        except Exception:
             pass
     
     assert response.status_code == 200, (

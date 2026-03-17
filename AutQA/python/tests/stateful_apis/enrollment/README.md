@@ -91,15 +91,6 @@ pytest tests/stateful_apis/enrollment/ -k "matching" -v -s
 - All dependencies from `requirements.txt`
 - Environment variables configured in `.env`
 
-## License
-
-Proprietary - AwareID/Anthropic
-
-## Contact
-
-For questions or issues, contact the AutQA team.
-
----
 
 **Suite Name:** AutQA Stateful Enrollment Suite  
 **Version:** 1.0  

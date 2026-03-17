@@ -44,14 +44,17 @@ def test_autocapture_video_encrypted_single_frame(api_client, preface_base_path,
         json=payload
     )
     
-    # Skip if image is invalid
+    # Skip if image is invalid or encryption key mismatch
     if response.status_code in [400, 500]:
         try:
             error = response.json()
+            error_code = error.get("errorCode", "")
             error_msg = error.get("errorMsg", "").lower()
+            if error_code == "DecryptionError" or "decryption" in error_msg or "encryption key" in error_msg:
+                pytest.skip(f"Encryption key mismatch: {error.get('errorMsg')} — update PUBLIC_KEY in .env")
             if "image" in error_msg or "invalid" in error_msg:
                 pytest.skip(f"Face image is invalid: {error.get('errorMsg')}")
-        except:
+        except Exception:
             pass
     
     assert response.status_code == 200, (
@@ -134,13 +137,17 @@ def test_autocapture_video_encrypted_multiple_frames(api_client, preface_base_pa
         json=payload
     )
     
-    # Skip if image is invalid
+    # Skip if image is invalid or encryption key mismatch
     if response.status_code in [400, 500]:
         try:
             error = response.json()
-            if "image" in error.get("errorMsg", "").lower():
-                pytest.skip("Face image is invalid")
-        except:
+            error_code = error.get("errorCode", "")
+            error_msg = error.get("errorMsg", "").lower()
+            if error_code == "DecryptionError" or "decryption" in error_msg or "encryption key" in error_msg:
+                pytest.skip(f"Encryption key mismatch: {error.get('errorMsg')} — update PUBLIC_KEY in .env")
+            if "image" in error_msg or "invalid" in error_msg:
+                pytest.skip(f"Face image is invalid: {error.get('errorMsg')}")
+        except Exception:
             pass
     
     assert response.status_code == 200
@@ -202,13 +209,17 @@ def test_autocapture_video_detection_modes(api_client, preface_base_path, face_i
         json=payload
     )
     
-    # Skip if image is invalid
+    # Skip if image is invalid or encryption key mismatch
     if response.status_code in [400, 500]:
         try:
             error = response.json()
-            if "image" in error.get("errorMsg", "").lower():
-                pytest.skip("Face image is invalid")
-        except:
+            error_code = error.get("errorCode", "")
+            error_msg = error.get("errorMsg", "").lower()
+            if error_code == "DecryptionError" or "decryption" in error_msg or "encryption key" in error_msg:
+                pytest.skip(f"Encryption key mismatch: {error.get('errorMsg')} — update PUBLIC_KEY in .env")
+            if "image" in error_msg or "invalid" in error_msg:
+                pytest.skip(f"Face image is invalid: {error.get('errorMsg')}")
+        except Exception:
             pass
     
     assert response.status_code == 200, (
@@ -264,13 +275,17 @@ def test_autocapture_video_different_resolutions(api_client, preface_base_path, 
         json=payload
     )
     
-    # Skip if image is invalid
+    # Skip if image is invalid or encryption key mismatch
     if response.status_code in [400, 500]:
         try:
             error = response.json()
-            if "image" in error.get("errorMsg", "").lower():
-                pytest.skip("Face image is invalid")
-        except:
+            error_code = error.get("errorCode", "")
+            error_msg = error.get("errorMsg", "").lower()
+            if error_code == "DecryptionError" or "decryption" in error_msg or "encryption key" in error_msg:
+                pytest.skip(f"Encryption key mismatch: {error.get('errorMsg')} — update PUBLIC_KEY in .env")
+            if "image" in error_msg or "invalid" in error_msg:
+                pytest.skip(f"Face image is invalid: {error.get('errorMsg')}")
+        except Exception:
             pass
     
     assert response.status_code == 200
@@ -315,13 +330,17 @@ def test_autocapture_video_minimum_frame_count(api_client, preface_base_path, fa
         json=payload
     )
     
-    # Skip if image is invalid
+    # Skip if image is invalid or encryption key mismatch
     if response.status_code in [400, 500]:
         try:
             error = response.json()
-            if "image" in error.get("errorMsg", "").lower():
-                pytest.skip("Face image is invalid")
-        except:
+            error_code = error.get("errorCode", "")
+            error_msg = error.get("errorMsg", "").lower()
+            if error_code == "DecryptionError" or "decryption" in error_msg or "encryption key" in error_msg:
+                pytest.skip(f"Encryption key mismatch: {error.get('errorMsg')} — update PUBLIC_KEY in .env")
+            if "image" in error_msg or "invalid" in error_msg:
+                pytest.skip(f"Face image is invalid: {error.get('errorMsg')}")
+        except Exception:
             pass
     
     assert response.status_code == 200

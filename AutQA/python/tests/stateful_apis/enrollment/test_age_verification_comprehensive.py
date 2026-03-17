@@ -92,51 +92,55 @@ class TestAgeVerificationComprehensive:
         logger.info("="*120)
         step_start = datetime.now()
         
-        # Get current config
-        config_response = api_client.http_client.get("/onboarding/admin/customerConfig")
-        assert config_response.status_code == 200, f"Failed to get config: {config_response.status_code}"
-        
-        current_config = config_response.json().get("onboardingConfig", {})
-        new_config = copy.deepcopy(current_config)
-        
-        # Configure age verification
-        enrollment = new_config.setdefault("onboardingOptions", {}).setdefault("enrollment", {})
-        enrollment["ageEstimation"] = {
+        # The server enforces a strict one-change-per-POST rule for onboardingOptions
+        # (same pattern as _ensure_face_enabled which enables each face flag separately).
+        # Face flags are already enabled by the setup_enrollment_config autouse fixture.
+        # Here we apply the remaining two changes each in their own request.
+
+        # Sub-step 1a: enable ageEstimation
+        r = api_client.http_client.get("/onboarding/admin/customerConfig")
+        assert r.status_code == 200, f"Failed to get config: {r.status_code}"
+        c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+        c.setdefault("onboardingOptions", {}).setdefault("enrollment", {})["ageEstimation"] = {
             "enabled": True,
             "minAge": min_age,
             "maxAge": max_age,
             "minTolerance": 0,
-            "maxTolerance": 0
+            "maxTolerance": 0,
         }
-        enrollment['addFace'] = True
-        enrollment['addDevice'] = True
-        enrollment['addDocument'] = False
-        
-        # Set other workflows
-        authentication = new_config.setdefault("onboardingOptions", {}).setdefault("authentication", {})
-        authentication['verifyFace'] = True
-        
-        reenrollment = new_config.setdefault("onboardingOptions", {}).setdefault("reenrollment", {})
-        reenrollment['verifyFace'] = True
-        
-        # Save configuration
         update_response = api_client.http_client.post(
             "/onboarding/admin/customerConfig",
-            json={"onboardingConfig": new_config}
+            json={"onboardingConfig": c},
         )
-        assert update_response.status_code == 200, f"Config update failed: {update_response.status_code}"
-        
+        assert update_response.status_code == 200, (
+            f"ageEstimation config update failed: {update_response.status_code} — {update_response.text[:300]}"
+        )
+        time.sleep(1)
+
+        # Sub-step 1b: enable addDevice
+        r = api_client.http_client.get("/onboarding/admin/customerConfig")
+        assert r.status_code == 200, f"Failed to get config: {r.status_code}"
+        c = copy.deepcopy(r.json().get("onboardingConfig", {}))
+        c.setdefault("onboardingOptions", {}).setdefault("enrollment", {})["addDevice"] = True
+        update_response = api_client.http_client.post(
+            "/onboarding/admin/customerConfig",
+            json={"onboardingConfig": c},
+        )
+        assert update_response.status_code == 200, (
+            f"addDevice config update failed: {update_response.status_code} — {update_response.text[:300]}"
+        )
+
         config_duration = (datetime.now() - step_start).total_seconds()
-        
+
         logger.info(f"✅ Configuration Applied:")
         logger.info(f"   Age Range: {min_age}-{max_age} years")
         logger.info(f"   Tolerance: 0 years (strict)")
-        logger.info(f"   Face Enrollment: ✅ ENABLED")
+        logger.info(f"   Face Enrollment: ✅ ENABLED (via autouse fixture)")
         logger.info(f"   Device Enrollment: ✅ ENABLED")
         logger.info(f"   Document Enrollment: ❌ DISABLED")
         logger.info(f"   Duration: {config_duration:.2f}s")
         logger.info(f"   Timestamp: {datetime.now().strftime('%m/%d/%Y, %I:%M:%S %p')}")
-        
+
         time.sleep(1)  # Allow config to propagate
         
         # ====================================================================
@@ -259,15 +263,19 @@ class TestAgeVerificationComprehensive:
             json=face_payload
         )
         
-        face_data = face_response.json() if face_response.status_code == 200 else {}
+        assert face_response.status_code == 200, \
+            f"addFace failed: {face_response.status_code} - {face_response.text[:300]}"
+        face_data = face_response.json()
         face_tx_id = face_data.get("transactionId", "N/A")
         face_timestamp = datetime.now()
         face_duration = (face_timestamp - step_start).total_seconds()
-        
+
+        logger.info(f"addFace raw response: {face_data}")
+
         # ====================================================================
         # EXTRACT VALIDATION DATA
         # ====================================================================
-        
+
         # Age Estimation
         age_check = face_data.get("ageEstimationCheck", {})
         age_from_server = age_check.get("ageFromFaceLivenessServer")
@@ -276,11 +284,22 @@ class TestAgeVerificationComprehensive:
         config_min_age = age_config.get("minAge")
         config_max_age = age_config.get("maxAge")
         config_enabled = age_config.get("enabled")
-        
-        # Liveness Detection
-        liveness_results = face_data.get("faceLivenessResults", {}).get("video", {})
-        liveness_data = liveness_results.get("liveness_result", {})
-        liveness_decision = liveness_data.get("decision", "UNKNOWN")
+
+        # Liveness Detection — handle both response formats:
+        #   Format A (nested): faceLivenessResults.video.liveness_result.decision
+        #   Format B (flat):   livenessResult (boolean)
+        liveness_data = (
+            face_data.get("faceLivenessResults", {})
+                     .get("video", {})
+                     .get("liveness_result", {})
+        )
+        liveness_decision = liveness_data.get("decision")
+        if liveness_decision is None:
+            flat = face_data.get("livenessResult")
+            if flat is not None:
+                liveness_decision = "LIVE" if flat else "SPOOF"
+            else:
+                liveness_decision = "UNKNOWN"
         liveness_score = liveness_data.get("score_frr", "N/A")
         
         # Enrollment Status

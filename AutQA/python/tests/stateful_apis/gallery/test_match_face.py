@@ -208,35 +208,28 @@ def test_match_face_default_tx_dl_face(api_client, gallery_base_path, env_store)
 @allure.title("matchFace FACE image — custom gallery, empty candidateList")
 @allure.severity(allure.severity_level.CRITICAL)
 @allure.description(
-    "Matches the FACE image against the first custom gallery in GALLERY_NAMES "
+    "Matches the FACE image against a fresh custom gallery (created inline) "
     "with an empty candidateList (match all enrolled users). "
     "Expects HTTP 200 and a valid response structure."
 )
 @pytest.mark.stateful
 @pytest.mark.gallery
-def test_match_face_custom_gallery_face_empty_candidate_list(api_client, gallery_base_path, env_store):
-    """FACE image, custom gallery from .env, candidateList=[]."""
+def test_match_face_custom_gallery_face_empty_candidate_list(api_client, gallery_base_path, env_store, custom_gallery):
+    """FACE image, fresh custom gallery, candidateList=[]."""
     image = _img(env_store, "FACE")
     if not image:
         pytest.skip("FACE not found in .env")
 
-    gallery_name = _first_gallery(env_store)
-    if not gallery_name:
-        pytest.skip(
-            "GALLERY_NAMES not found in .env. "
-            "Run: pytest tests/stateful_apis/gallery/test_list_gallery.py::test_list_gallery -v"
-        )
-
     response = api_client.http_client.post(
         f"{gallery_base_path}/matchFace",
-        json={"image": image, "galleryName": gallery_name, "candidateList": []},
+        json={"image": image, "galleryName": custom_gallery, "candidateList": []},
     )
 
     assert response.status_code == 200, (
         f"Expected 200, got {response.status_code}. Response: {response.text}"
     )
     _assert_match_structure(response.json())
-    print(f"\n[OK] Custom '{gallery_name}' / FACE / empty candidateList → {response.json()['matchCount']} match(es)")
+    print(f"\n[OK] Custom '{custom_gallery}' / FACE / empty candidateList → {response.json()['matchCount']} match(es)")
 
 
 @allure.feature("Gallery API")
@@ -270,6 +263,16 @@ def test_match_face_custom_gallery_face_with_candidate(api_client, gallery_base_
             "::test_register_multiple_users -v"
         )
 
+    # Validate gallery still exists on the server — skip if stale
+    list_resp = api_client.http_client.get(f"{gallery_base_path}/listGallery")
+    if list_resp.status_code == 200:
+        live_galleries = [g.get("galleryName", g) for g in list_resp.json().get("list", [])]
+        if gallery_name not in live_galleries:
+            pytest.skip(
+                f"Gallery '{gallery_name}' no longer exists on the server. "
+                "Re-run test_add_gallery then test_list_gallery to refresh GALLERY_NAMES in .env."
+            )
+
     response = api_client.http_client.post(
         f"{gallery_base_path}/matchFace",
         json={"image": image, "galleryName": gallery_name, "candidateList": [reg_code]},
@@ -294,27 +297,20 @@ def test_match_face_custom_gallery_face_with_candidate(api_client, gallery_base_
 @allure.title("matchFace SPOOF image — custom gallery")
 @allure.severity(allure.severity_level.NORMAL)
 @allure.description(
-    "Matches the SPOOF image against the first custom gallery in GALLERY_NAMES. "
+    "Matches the SPOOF image against a fresh custom gallery (created inline). "
     "Expects HTTP 200 and a valid response structure."
 )
 @pytest.mark.stateful
 @pytest.mark.gallery
-def test_match_face_custom_gallery_spoof_image(api_client, gallery_base_path, env_store):
-    """SPOOF image, custom gallery from .env."""
+def test_match_face_custom_gallery_spoof_image(api_client, gallery_base_path, env_store, custom_gallery):
+    """SPOOF image, fresh custom gallery."""
     image = _img(env_store, "SPOOF")
     if not image:
         pytest.skip("SPOOF not found in .env")
 
-    gallery_name = _first_gallery(env_store)
-    if not gallery_name:
-        pytest.skip(
-            "GALLERY_NAMES not found in .env. "
-            "Run: pytest tests/stateful_apis/gallery/test_list_gallery.py::test_list_gallery -v"
-        )
-
     response = api_client.http_client.post(
         f"{gallery_base_path}/matchFace",
-        json={"image": image, "galleryName": gallery_name},
+        json={"image": image, "galleryName": custom_gallery},
     )
 
     assert response.status_code == 200, (
@@ -322,7 +318,7 @@ def test_match_face_custom_gallery_spoof_image(api_client, gallery_base_path, en
     )
     result = response.json()
     _assert_match_structure(result)
-    print(f"\n[OK] Custom '{gallery_name}' / SPOOF → {result['matchCount']} match(es)")
+    print(f"\n[OK] Custom '{custom_gallery}' / SPOOF → {result['matchCount']} match(es)")
     if result["list"]:
         top = result["list"][0]
         print(f"     Top candidate score: {top.get('scorePercent', top.get('score', 'N/A'))}%")

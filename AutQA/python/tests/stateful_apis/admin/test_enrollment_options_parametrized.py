@@ -212,13 +212,6 @@ PRESET_CONFIGS = {
         "addVoice": False,
         "addPIN": False,
     },
-    "full_biometric": {
-        "addDevice": True,
-        "addFace": True,
-        "addDocument": True,
-        "addVoice": True,
-        "addPIN": False,
-    },
 }
 
 

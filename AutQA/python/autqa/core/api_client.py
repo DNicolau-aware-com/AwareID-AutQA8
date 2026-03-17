@@ -86,11 +86,15 @@ class ApiClient:
         
         # Create HTTP client with token
         if http_client is None:
-            self.http_client = HttpClient(jwt_token=token)
+            self.http_client = HttpClient(
+                jwt_token=token,
+                token_service=self.token_service,
+            )
         else:
             self.http_client = http_client
             if token:
                 self.http_client.set_jwt_token(token)
+            self.http_client._token_service = self.token_service
         
         # Initialize API endpoint groups
         self.enrollment = EnrollmentApi(self.http_client)

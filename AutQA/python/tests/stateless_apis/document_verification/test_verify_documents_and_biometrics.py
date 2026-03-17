@@ -1,114 +1,170 @@
-"""Document and biometrics verification tests."""
+"""Document and biometrics verification tests.
+
+POST /documentVerification/verifyDocumentsAndBiometrics
+Verifies document OCR fields (MRZ/Barcode/Visual) and performs facial match
+against the portrait extracted from the ID card.
+
+Images sourced from .env: DAN_DOC_FRONT, DAN_DOC_BACK, FACE
+"""
 
 import pytest
 
 
 @pytest.mark.stateless
 @pytest.mark.document_verification
-def test_verify_document_and_face(api_client, doc_verification_base_path, document_image_base64, document_image_rear_base64, face_image_base64):
+def test_verify_document_and_face(
+    api_client,
+    doc_verification_base_path,
+    document_image_base64,
+    document_image_rear_base64,
+    face_image_base64,
+):
     """
-    Test POST /documentVerification/verifyDocumentsAndBiometrics.
-    
-    Verifies document (front and back) and performs facial match against the portrait from ID.
-    Uses exact payload structure with two document images.
+    Positive test: submit front + back document images with a face image.
+    Expects 200 with overallAuthenticationResult, documentAuthenticationResult,
+    and biometricsAuthenticationResult in the response.
     """
     payload = {
         "documentsInfo": {
             "documentImage": [
                 {
                     "lightingScheme": 6,
-                    "image": document_image_base64,      # Front image
-                    "format": "JPG"
+                    "image": document_image_base64,
+                    "format": "jpg"
                 },
                 {
                     "lightingScheme": 6,
-                    "image": document_image_rear_base64,  # Back image
-                    "format": "JPG"
+                    "image": document_image_rear_base64,
+                    "format": "jpg"
                 }
-            ],
-            "documentPayload": {
-                "request": {
-                    "vendor": "REGULA",
-                    "data": {}
-                }
-            },
-            "processParam": {
-                "alreadyCropped": False
-            }
+            ]
         },
         "biometricsInfo": {
             "facialImage": {
                 "image": face_image_base64
             }
-        },
-        "processingInstructions": {
-            "checkLiveness": True
         }
     }
-    
+
     response = api_client.http_client.post(
         f"{doc_verification_base_path}/verifyDocumentsAndBiometrics",
         json=payload
     )
-    
-    # Skip if images are invalid
-    if response.status_code in [400, 500]:
+
+    if response.status_code == 400:
         try:
-            error = response.json()
-            error_code = error.get("errorCode", "")
-            error_msg = error.get("errorMsg", "").lower()
-            
-            # Skip on any of these - all indicate bad images
-            skip_codes = ["INVALID_INPUT", "OCR_PROCESSING_ERROR"]
-            skip_keywords = ["base64", "improper", "invalid", "unexpected error", "processing"]
-            
-            if error_code in skip_codes or any(keyword in error_msg for keyword in skip_keywords):
-                pytest.skip(f"Document or face image is not valid. Error: {error_code} - {error.get('errorMsg')}")
-        except:
+            err = response.json()
+            if "base64" in err.get("errorMsg", "").lower() or err.get("errorCode") == "INVALID_INPUT":
+                pytest.skip(
+                    f"Document image rejected by server: {err.get('errorMsg')} — "
+                    "check DAN_DOC_FRONT/DAN_DOC_BACK encoding in .env"
+                )
+        except Exception:
             pass
-    
+
     assert response.status_code == 200, (
         f"Expected 200, got {response.status_code}. Response: {response.text}"
     )
-    
+
     result = response.json()
-    
-    # Verify required response fields
-    assert "overallAuthenticationResult" in result, "Response should contain overallAuthenticationResult"
-    assert "documentAuthenticationResult" in result, "Response should contain documentAuthenticationResult"
-    assert "biometricsAuthenticationResult" in result, "Response should contain biometricsAuthenticationResult"
-    
-    # Verify result values
+
+    # ── Required top-level fields ──────────────────────────────────────────────
+    assert "overallAuthenticationResult" in result, "Missing overallAuthenticationResult"
+    assert "documentAuthenticationResult" in result, "Missing documentAuthenticationResult"
+    assert "biometricsAuthenticationResult" in result, "Missing biometricsAuthenticationResult"
+
     assert result["overallAuthenticationResult"] in ["OK", "FAILED", "UNDEFINED"], (
-        f"Invalid overallAuthenticationResult: {result['overallAuthenticationResult']}"
+        f"Unexpected overallAuthenticationResult: {result['overallAuthenticationResult']}"
     )
-    
-    print(f"\n? Document and biometrics verification successful!")
-    print(f"  Overall Result: {result['overallAuthenticationResult']}")
-    
-    # Display document authentication results
-    if "documentAuthenticationResult" in result:
-        doc_result = result["documentAuthenticationResult"]
-        print(f"\n  ?? Document Authentication:")
-        print(f"    Document Type: {doc_result.get('documentType', 'N/A')}")
-        print(f"    Country: {doc_result.get('countryName', 'N/A')}")
-        print(f"    ICAO Code: {doc_result.get('icaoCode', 'N/A')}")
-        print(f"    Year: {doc_result.get('year', 'N/A')}")
-        print(f"    Overall Result: {doc_result.get('overallResult', 'N/A')}")
-        print(f"    Overall Score: {doc_result.get('overallResultScore', 'N/A')}")
-        print(f"    MRZ Present: {doc_result.get('mrzPresence', 'N/A')}")
-        print(f"    RFID Present: {doc_result.get('rfidPresence', 'N/A')}")
-    
-    # Display biometric authentication results
-    if "biometricsAuthenticationResult" in result:
-        bio_result = result["biometricsAuthenticationResult"]
-        print(f"\n  ?? Biometric Authentication:")
-        print(f"    Match Result: {bio_result.get('matchResult', 'N/A')}")
-        print(f"    Match Score: {bio_result.get('matchScore', 'N/A')}")
-        print(f"    Modality: {bio_result.get('modality', 'N/A')}")
-    
-    # Display additional info
-    print(f"\n  ??  Additional Info:")
-    print(f"    Retry Document Capture: {result.get('retryDocumentCapture', 'N/A')}")
-    print(f"    ICAO Chip Available: {result.get('icaoChipAvailable', 'N/A')}")
-    print(f"    ICAO Verification Result: {result.get('icaoVerificationResult', 'N/A')}")
+
+    # ── documentAuthenticationResult ──────────────────────────────────────────
+    doc = result["documentAuthenticationResult"]
+    assert "overallResult" in doc, "Missing documentAuthenticationResult.overallResult"
+    assert doc["overallResult"] in ["OK", "FAILED", "UNDEFINED"], (
+        f"Unexpected documentAuthenticationResult.overallResult: {doc['overallResult']}"
+    )
+
+    # ── biometricsAuthenticationResult ────────────────────────────────────────
+    bio = result["biometricsAuthenticationResult"]
+    assert "matchResult" in bio, "Missing biometricsAuthenticationResult.matchResult"
+    assert "modality" in bio, "Missing biometricsAuthenticationResult.modality"
+    assert bio["matchResult"] in ["OK", "FAILED", "UNDEFINED"], (
+        f"Unexpected biometricsAuthenticationResult.matchResult: {bio['matchResult']}"
+    )
+    assert bio["modality"] == "FACE", (
+        f"Expected modality FACE, got: {bio['modality']}"
+    )
+
+    # ── Print summary ──────────────────────────────────────────────────────────
+    print(f"\nOverall Result:   {result['overallAuthenticationResult']}")
+    print(f"\nDocument Authentication:")
+    print(f"  Type:           {doc.get('documentType', 'N/A')}")
+    print(f"  Country:        {doc.get('countryName', 'N/A')}")
+    print(f"  ICAO Code:      {doc.get('icaoCode', 'N/A')}")
+    print(f"  Year:           {doc.get('year', 'N/A')}")
+    print(f"  Overall:        {doc.get('overallResult', 'N/A')} (score: {doc.get('overallResultScore', 'N/A')})")
+    print(f"  MRZ Present:    {doc.get('mrzPresence', 'N/A')}")
+    print(f"  RFID Present:   {doc.get('rfidPresence', 'N/A')}")
+    print(f"\nBiometric Authentication:")
+    print(f"  Match Result:   {bio.get('matchResult', 'N/A')}")
+    print(f"  Match Score:    {bio.get('matchScore', 'N/A')}")
+    print(f"  Modality:       {bio.get('modality', 'N/A')}")
+    print(f"\nRetry Capture:    {result.get('retryDocumentCapture', 'N/A')}")
+    print(f"ICAO Chip:        {result.get('icaoChipAvailable', 'N/A')}")
+    print(f"ICAO Verification:{result.get('icaoVerificationResult', 'N/A')}")
+
+
+@pytest.mark.stateless
+@pytest.mark.document_verification
+def test_verify_document_front_only(
+    api_client,
+    doc_verification_base_path,
+    document_image_base64,
+    face_image_base64,
+):
+    """
+    Submit front-only document with face image.
+    Server should accept a single-image submission and return 200.
+    """
+    payload = {
+        "documentsInfo": {
+            "documentImage": [
+                {
+                    "lightingScheme": 6,
+                    "image": document_image_base64,
+                    "format": "jpg"
+                }
+            ]
+        },
+        "biometricsInfo": {
+            "facialImage": {
+                "image": face_image_base64
+            }
+        }
+    }
+
+    response = api_client.http_client.post(
+        f"{doc_verification_base_path}/verifyDocumentsAndBiometrics",
+        json=payload
+    )
+
+    if response.status_code == 400:
+        try:
+            err = response.json()
+            if "base64" in err.get("errorMsg", "").lower() or err.get("errorCode") == "INVALID_INPUT":
+                pytest.skip(
+                    f"Document image rejected by server: {err.get('errorMsg')} — "
+                    "check DAN_DOC_FRONT encoding in .env"
+                )
+        except Exception:
+            pass
+
+    assert response.status_code == 200, (
+        f"Expected 200, got {response.status_code}. Response: {response.text}"
+    )
+
+    result = response.json()
+    assert "overallAuthenticationResult" in result
+    assert result["overallAuthenticationResult"] in ["OK", "FAILED", "UNDEFINED"]
+
+    print(f"\nFront-only Overall Result: {result['overallAuthenticationResult']}")

@@ -2,7 +2,6 @@
 Passport Enrollment Test - Enhanced with Full OCR Analysis
 """
 import pytest
-import copy
 import time
 import logging
 import json
@@ -37,9 +36,9 @@ class TestPassportEnrollment:
         self,
         api_client,
         unique_username,
-        face_frames,
         workflow,
         env_vars,
+        apply_server_config,
         caplog,
     ):
         """Simple passport enrollment with comprehensive OCR analysis"""
@@ -47,11 +46,11 @@ class TestPassportEnrollment:
         caplog.set_level(logging.INFO)
         
         # Get images
-        face_image = normalize_base64(env_vars.get("PASS_FACE_DAN", "").strip())
+        face_image = normalize_base64((env_vars.get("FACE") or "").strip())
         passport_front = normalize_base64(env_vars.get("PASS_FRONT_DAN", "").strip())
-        
+
         if not face_image:
-            pytest.skip("Missing PASS_FACE_DAN in .env")
+            pytest.skip("Missing FACE in .env")
         
         if not passport_front:
             pytest.skip("Missing PASS_FRONT_DAN in .env")
@@ -67,22 +66,8 @@ class TestPassportEnrollment:
         # Config, Enroll, Device, Face steps (abbreviated for brevity)
         # ... (keeping it short, just showing the OCR part)
         
-        # Configure
-        config_response = api_client.http_client.get("/onboarding/admin/customerConfig")
-        current_config = config_response.json().get("onboardingConfig", {})
-        new_config = copy.deepcopy(current_config)
-        
-        enrollment = new_config.setdefault("onboardingOptions", {}).setdefault("enrollment", {})
-        enrollment["ageEstimation"] = {"enabled": False, "minAge": 1, "maxAge": 101, "minTolerance": 0, "maxTolerance": 0}
-        enrollment['addDocument'] = True
-        enrollment['addFace'] = True
-        enrollment['addDevice'] = True
-        
-        document_settings = new_config.setdefault("onboardingOptions", {}).setdefault("document", {})
-        document_settings['rfid'] = "DISABLED"
-        
-        api_client.http_client.post("/onboarding/admin/customerConfig", json={"onboardingConfig": new_config})
-        time.sleep(1)
+        # Configure - override autouse enrollment_face_only with document preset
+        apply_server_config("enrollment_with_document")
         
         # Enroll
         enroll_response = api_client.http_client.post("/onboarding/enrollment/enroll", json={
@@ -103,20 +88,30 @@ class TestPassportEnrollment:
         })
         time.sleep(1)
         
-        # Face
+        # Face - build frames from FACE env var
+        now_ms = int(time.time() * 1000)
+        frames = [
+            {"data": face_image, "timestamp": now_ms + (i * 30), "tags": []}
+            for i in range(3)
+        ]
+
         face_response = api_client.http_client.post("/onboarding/enrollment/addFace", json={
             "enrollmentToken": enrollment_token,
             "faceLivenessData": {
                 "video": {
                     "meta_data": {"username": unique_username},
-                    "workflow_data": {"workflow": workflow, "frames": face_frames},
+                    "workflow_data": {"workflow": workflow, "frames": frames},
                 },
             },
         })
         
-        face_data = face_response.json() if face_response.status_code == 200 else {}
-        liveness_data = face_data.get("faceLivenessResults", {}).get("video", {}).get("liveness_result", {})
-        liveness_decision = liveness_data.get("decision", "UNKNOWN")
+        assert face_response.status_code == 200, \
+            f"addFace failed: {face_response.status_code} - {face_response.text[:300]}"
+        face_data = face_response.json()
+        logger.info(f"addFace full response: {json.dumps(face_data, indent=2)}")
+        liveness_result = face_data.get("livenessResult", False)
+        liveness_decision = "LIVE" if liveness_result else "SPOOF"
+        logger.info(f"liveness_decision: {liveness_decision}")
         
         time.sleep(3)
         

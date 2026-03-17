@@ -31,9 +31,9 @@ DOCUMENT_SCENARIOS = [
     {
         "name": "TX Driver License with TX Face (POSITIVE)",
         "doc_type": "Driver License",
-        "face_env_var": "TX_FACE",
-        "doc_front_env_var": "TX_DOC_FRONT",
-        "doc_back_env_var": "TX_DOC_BACK",
+        "face_env_var": "TX_DL_FACE_B64",
+        "doc_front_env_var": "TX_DL_FRONT_b64",
+        "doc_back_env_var": "TX_DL_BACK_b64",
         "min_age": 18,
         "max_age": 101,
         "expected_face_match": True,
@@ -53,9 +53,9 @@ DOCUMENT_SCENARIOS = [
     {
         "name": "TX Driver License with DAN Face (NEGATIVE - Mismatch)",
         "doc_type": "Driver License",
-        "face_env_var": "PASS_FACE_DAN",  # DAN's face
-        "doc_front_env_var": "TX_DOC_FRONT",  # TX document (different person)
-        "doc_back_env_var": "TX_DOC_BACK",
+        "face_env_var": "PASS_FACE_DAN",       # DAN's face
+        "doc_front_env_var": "TX_DL_FRONT_b64",  # TX document (different person)
+        "doc_back_env_var": "TX_DL_BACK_b64",
         "min_age": 18,
         "max_age": 101,
         "expected_face_match": False,  # Should NOT match
@@ -88,9 +88,19 @@ class TestDocumentFaceMatching:
         face_image = normalize_base64(env_vars.get(scenario["face_env_var"], "").strip())
         doc_front = normalize_base64(env_vars.get(scenario["doc_front_env_var"], "").strip())
         doc_back = normalize_base64(env_vars.get(scenario["doc_back_env_var"], "").strip()) if scenario["doc_back_env_var"] else None
-        
+
         if not face_image or not doc_front:
             pytest.skip(f"Missing {scenario['face_env_var']} or {scenario['doc_front_env_var']}")
+
+        # Build liveness frames from the scenario face image so that the enrolled
+        # biometric matches the face presented to addDocumentOCR.  Using the generic
+        # FACE fixture would enroll a different person, causing the document face-match
+        # to return False even for POSITIVE scenarios.
+        now_ms = int(time.time() * 1000)
+        scenario_face_frames = [
+            {"data": face_image, "timestamp": now_ms + (i * 30), "tags": []}
+            for i in range(3)
+        ]
         
         test_start = datetime.now()
         
@@ -149,7 +159,7 @@ class TestDocumentFaceMatching:
             "faceLivenessData": {
                 "video": {
                     "meta_data": {"username": unique_username},
-                    "workflow_data": {"workflow": workflow, "frames": face_frames},
+                    "workflow_data": {"workflow": workflow, "frames": scenario_face_frames},
                 },
             },
         })

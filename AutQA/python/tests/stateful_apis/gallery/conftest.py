@@ -71,24 +71,14 @@ def registered_user(env_store):
 
 
 @pytest.fixture
-def custom_gallery(api_client, gallery_base_path, unique_gallery_name, env_store):
+def custom_gallery(api_client, gallery_base_path, unique_gallery_name):
     """
-    Provide a custom gallery for the test.
+    Provide a fresh custom gallery for each test.
 
-    If GALLERY_NAME is set in .env (saved by test_add_gallery), that gallery is
-    used directly — no creation or deletion happens.
-
-    If GALLERY_NAME is not in .env, a fresh gallery is created for this test
-    and deleted in teardown.
+    Always creates a new gallery — never reuses a name from .env, which
+    may reference a gallery that no longer exists on the server after a reset.
+    The gallery is deleted in teardown.
     """
-    gallery_from_env = env_store.get("GALLERY_NAME")
-
-    if gallery_from_env:
-        print(f"\n[INFO] Using existing gallery from .env: {gallery_from_env}")
-        yield gallery_from_env
-        return  # no teardown — we did not create it
-
-    # No gallery in .env — create a temporary one
     response = api_client.http_client.post(
         f"{gallery_base_path}/addGallery",
         json={"galleryName": unique_gallery_name},
@@ -102,7 +92,7 @@ def custom_gallery(api_client, gallery_base_path, unique_gallery_name, env_store
 
     yield unique_gallery_name
 
-    # Teardown: delete only the gallery we created
+    # Teardown: delete the gallery we created
     api_client.http_client.post(
         f"{gallery_base_path}/deleteGallery",
         json={"galleryName": unique_gallery_name},
@@ -138,30 +128,42 @@ def registration_codes(env_store):
 
 
 @pytest.fixture
-def gallery_names(env_store):
+def gallery_names(api_client, gallery_base_path):
     """
-    Return the list of gallery names from .env (GALLERY_NAMES, comma-separated).
+    Provide at least 2 gallery names for bulk tests.
 
-    Run test_list_gallery once to populate this key:
-        pytest tests/stateful_apis/gallery/test_list_gallery.py::test_list_gallery -v
-
-    Skips the test if fewer than 2 galleries are available (bulk tests need at least 2).
+    Always creates 2 fresh temporary galleries so that bulk tests work even
+    after a server reset (stale GALLERY_NAMES in .env are ignored).
+    Both galleries are deleted in teardown.
     """
-    raw = env_store.get("GALLERY_NAMES")
-    if not raw:
-        pytest.skip(
-            "GALLERY_NAMES not found in .env. "
-            "Run: pytest tests/stateful_apis/gallery/test_list_gallery.py::test_list_gallery -v"
+    created = []
+    for _ in range(2):
+        name = f"tmpgallery_{uuid.uuid4().hex[:8]}"
+        r = api_client.http_client.post(
+            f"{gallery_base_path}/addGallery",
+            json={"galleryName": name},
         )
+        if r.status_code != 200:
+            # Clean up galleries already created before failing
+            for n in created:
+                api_client.http_client.post(
+                    f"{gallery_base_path}/deleteGallery",
+                    json={"galleryName": n},
+                )
+            pytest.skip(
+                f"Could not create temp gallery '{name}' "
+                f"({r.status_code}): {r.text[:200]}"
+            )
+        created.append(name)
 
-    names = [n.strip() for n in raw.split(",") if n.strip()]
-    if len(names) < 2:
-        pytest.skip(
-            f"GALLERY_NAMES must contain at least 2 galleries for bulk tests. Found: {names}"
+    print(f"\n[INFO] Created {len(created)} temporary galleries: {created}")
+    yield created
+
+    for name in created:
+        api_client.http_client.post(
+            f"{gallery_base_path}/deleteGallery",
+            json={"galleryName": name},
         )
-
-    print(f"\n[INFO] Using {len(names)} galleries from .env: {names}")
-    return names
 
 
 @pytest.fixture(autouse=True)

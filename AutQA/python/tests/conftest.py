@@ -40,27 +40,74 @@ except ImportError:
 # AUTO TOKEN REFRESH (runs once per session)
 # ==============================================================================
 
+def _validate_environment(env: dict) -> None:
+    """
+    Validate required environment variables before tests run.
+    Prints a clear error listing missing vars and exits pytest if critical ones are absent.
+    """
+    import pytest as _pytest
+
+    errors = []
+    warnings_list = []
+
+    if not env.get("BASEURL"):
+        errors.append("  BASEURL        - API base URL (required for all tests)")
+
+    if not (env.get("APIKEY") or env.get("apikey")):
+        warnings_list.append("  APIKEY         - API key (required for most endpoints)")
+
+    oauth_vars = {
+        "REALM_NAME": env.get("REALM_NAME"),
+        "CLIENT_ID": env.get("CLIENT_ID"),
+        "CLIENT_SECRET": env.get("CLIENT_SECRET"),
+    }
+    oauth_present = [k for k, v in oauth_vars.items() if v]
+    oauth_missing = [k for k, v in oauth_vars.items() if not v]
+
+    # Partial OAuth config is an error; fully absent OAuth is just a warning
+    if oauth_present and oauth_missing:
+        for k in oauth_missing:
+            errors.append(f"  {k:<15} - OAuth credential (partially configured; all three required)")
+
+    if errors:
+        print("\n" + "=" * 80)
+        print("[FATAL] Missing required environment variables:")
+        print("=" * 80)
+        for msg in errors:
+            print(f"  [MISSING]{msg}")
+        print()
+        print("  Fix: add the missing variables to your .env file.")
+        print("=" * 80 + "\n")
+        _pytest.exit("Required environment variables missing. See above.", returncode=1)
+
+    if warnings_list:
+        print("\n[WARNING] Optional environment variables not set:")
+        for msg in warnings_list:
+            print(f"  [WARN]{msg}")
+
+
 def pytest_configure(config):
     """
     Pytest hook that runs before test collection.
-    Automatically refreshes JWT token if expired or about to expire.
+    Validates environment then automatically refreshes JWT token.
     """
     if not FRAMEWORK_AVAILABLE:
         print("[WARNING] Framework not available - skipping JWT refresh")
         return
-    
-    # Framework available - proceed with JWT refresh
-    
+
     try:
         from generated.retrieve_token import retrieve_token
         from dotenv import dotenv_values
-        
+
         env = dotenv_values()
-        
+
+        # Validate environment variables before anything else
+        _validate_environment(env)
+
         # Check if we have OAuth credentials
-        if not all([env.get("BASEURL"), env.get("REALM_NAME"), 
+        if not all([env.get("BASEURL"), env.get("REALM_NAME"),
                    env.get("CLIENT_ID"), env.get("CLIENT_SECRET")]):
-            return  # Silently skip if credentials not available
+            return  # No OAuth config - skip token refresh
         
         print("\n" + "="*80)
         print("[>>] AUTO TOKEN REFRESH")
@@ -99,6 +146,16 @@ def pytest_configure(config):
             # Invalidate settings cache so ApiClient picks up the fresh token
             from autqa.core import config as _config
             _config._settings_cache = None
+
+            # Update client.py module-level JWT so generated/ files pick up the fresh token
+            try:
+                import client as _client
+                import time as _time
+                _client.JWT = jwt
+                _client._DOTENV["JWT"] = jwt
+                _client._JWT_EXPIRY = _time.time() + (expires_in if isinstance(expires_in, (int, float)) else 300)
+            except Exception:
+                pass
 
             print(f"[INFO] [OK] JWT token refreshed successfully!")
             print(f"[INFO]      Token expires in: {expires_in} seconds")
