@@ -20,6 +20,7 @@ from typing import List
 @dataclass
 class TestResult:
     """Test result summary."""
+    __test__ = False  # Prevent pytest from collecting this as a test class
     suite_name: str
     total: int
     passed: int

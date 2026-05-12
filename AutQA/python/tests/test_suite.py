@@ -39,7 +39,8 @@ logger = get_logger(__name__)
 
 class TestResult:
     """Container for test results."""
-    
+    __test__ = False  # Prevent pytest from collecting this as a test class
+
     def __init__(self, test_name: str):
         self.test_name = test_name
         self.success = False
@@ -71,7 +72,8 @@ class TestResult:
 
 class TestSuite:
     """Main test suite runner."""
-    
+    __test__ = False  # Prevent pytest from collecting this as a test class
+
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
         self.results: List[TestResult] = []
