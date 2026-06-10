@@ -1,0 +1,41 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_is_registration_in_gallery.py::test_is_registration_in_gallery_false",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:15.435164",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "test_gallery_5185e367"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 913.96
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/isRegistrationInGallery",
+      "request_body": {
+        "galleryName": "test_gallery_5185e367",
+        "registrationCode": "1a6047f1-33f3-48b3-8749-1182cebb25eb"
+      },
+      "response_status": 200,
+      "response_body": {
+        "exist": false
+      },
+      "elapsed_ms": 384.61
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "test_gallery_5185e367"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 573.68
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_add_registration_to_gallery.py::test_add_registration_to_gallery_missing_name",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:42:59.500649",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addRegistrationToGallery",
+      "request_body": {
+        "registrationCode": "f3dd9fa3-9a4b-4e7c-a5db-87d9be7d5855"
+      },
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "Valid galleryName (name of a custom gallery) attribute is required",
+        "status": 500,
+        "timestamp": "2026-03-18 02:43:44"
+      },
+      "elapsed_ms": 3103.5
+    }
+  ]
+}

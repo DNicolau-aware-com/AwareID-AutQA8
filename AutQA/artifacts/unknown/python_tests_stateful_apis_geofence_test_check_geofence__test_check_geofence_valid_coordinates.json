@@ -1,0 +1,16 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/geofence/test_check_geofence.py::test_check_geofence_valid_coordinates",
+  "result": "UNKNOWN",
+  "timestamp": "2026-03-18T10:43:56.405119",
+  "transactions": [
+    {
+      "method": "GET",
+      "url": "/compliance/geofence/definitions",
+      "request_body": null,
+      "response_status": 404,
+      "response_body": null,
+      "elapsed_ms": 286.41
+    }
+  ]
+}

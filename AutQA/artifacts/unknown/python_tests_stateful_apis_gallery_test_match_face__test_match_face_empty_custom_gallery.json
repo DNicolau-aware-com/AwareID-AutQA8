@@ -1,0 +1,42 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_match_face.py::test_match_face_empty_custom_gallery",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:31.376027",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "test_gallery_523916db"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 879.15
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/matchFace",
+      "request_body": {
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)",
+        "galleryName": "test_gallery_523916db"
+      },
+      "response_status": 200,
+      "response_body": {
+        "matchCount": 0,
+        "list": []
+      },
+      "elapsed_ms": 878.48
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "test_gallery_523916db"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 544.76
+    }
+  ]
+}

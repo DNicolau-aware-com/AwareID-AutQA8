@@ -1,0 +1,21 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_add_gallery.py::test_add_gallery_missing_name",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:42:48.932302",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {},
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "Valid galleryName (name of a custom gallery) attribute is required",
+        "status": 500,
+        "timestamp": "2026-03-18 02:43:34"
+      },
+      "elapsed_ms": 2265.89
+    }
+  ]
+}

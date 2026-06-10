@@ -1,0 +1,21 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/b2c/test_get_operation_status.py::test_get_operation_status_invalid_token",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:18:53.946758",
+  "transactions": [
+    {
+      "method": "GET",
+      "url": "/onboarding/b2c/operationStatus/2d1c685f-aa62-4370-b711-86bd778fbfb9",
+      "request_body": null,
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "RestServerError",
+        "errorMsg": "Internal Server Error",
+        "status": 500,
+        "timestamp": "2026-03-18 02:19:39"
+      },
+      "elapsed_ms": 3031.98
+    }
+  ]
+}

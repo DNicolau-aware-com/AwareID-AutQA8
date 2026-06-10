@@ -1,0 +1,21 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_delete_gallery.py::test_delete_gallery_missing_name",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:08.326108",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {},
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "Valid galleryName (name of a custom gallery) attribute is required",
+        "status": 500,
+        "timestamp": "2026-03-18 02:43:53"
+      },
+      "elapsed_ms": 3198.93
+    }
+  ]
+}

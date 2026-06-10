@@ -1,0 +1,64 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_add_registrations_to_galleries.py::test_add_registrations_to_galleries_bulk",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:03.880035",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_1e610e5b"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 921.83
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_50dd2ec5"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 872.24
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addRegistrationsToGalleries",
+      "request_body": {
+        "galleryNames": [
+          "tmpgallery_1e610e5b",
+          "tmpgallery_50dd2ec5"
+        ],
+        "registrationCodes": [
+          "f3dd9fa3-9a4b-4e7c-a5db-87d9be7d5855"
+        ]
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 283.92
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_1e610e5b"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 798.2
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_50dd2ec5"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 838.04
+    }
+  ]
+}

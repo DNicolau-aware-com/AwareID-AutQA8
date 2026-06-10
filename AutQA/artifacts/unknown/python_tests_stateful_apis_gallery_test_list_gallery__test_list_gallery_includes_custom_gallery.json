@@ -1,0 +1,51 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_list_gallery.py::test_list_gallery_includes_custom_gallery",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:17.602942",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "test_gallery_f8c3651e"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 864.6
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/gallery/listGallery",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "list": [
+          {
+            "galleryName": "(default)",
+            "numberOfRegistrations": 137,
+            "lastUpdated": "2026-03-17T17:34:26",
+            "lastUpdatedUuid": "956caa01-68c7-40bb-a4ef-db48b24113ed"
+          },
+          {
+            "galleryName": "test_gallery_f8c3651e",
+            "numberOfRegistrations": 0,
+            "lastUpdated": "2026-03-18T10:44:01",
+            "lastUpdatedUuid": "a0132efe-870d-478d-a754-126e6e8a1edc"
+          }
+        ]
+      },
+      "elapsed_ms": 331.29
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "test_gallery_f8c3651e"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 611.66
+    }
+  ]
+}

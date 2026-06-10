@@ -1,0 +1,21 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_match_face.py::test_match_face_default_spoof_image",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:22.632746",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/matchFace",
+      "request_body": {
+        "image": "/9j/4QCbRXhpZgAATU0AKgAAAAgAAgEyAAIAAAAUAAAAJodpAA... (truncated, length: 117404)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "matchCount": 0,
+        "list": []
+      },
+      "elapsed_ms": 1113.35
+    }
+  ]
+}

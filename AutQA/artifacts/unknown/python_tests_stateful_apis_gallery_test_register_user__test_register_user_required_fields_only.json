@@ -1,0 +1,22 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_register_user.py::test_register_user_required_fields_only",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:35.877618",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_req_d675a612",
+        "email": "gallery_req_d675a612@test.aware.com",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "8fb4223e-c751-4414-9583-9b70d912292a"
+      },
+      "elapsed_ms": 1280.0
+    }
+  ]
+}

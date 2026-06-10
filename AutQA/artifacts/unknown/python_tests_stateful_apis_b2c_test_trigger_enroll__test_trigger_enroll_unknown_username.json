@@ -1,0 +1,24 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/b2c/test_trigger_enroll.py::test_trigger_enroll_unknown_username",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:19:10.978518",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/b2c/triggerEnroll",
+      "request_body": {
+        "username": "dantest_20260318_101910_9ca9eb"
+      },
+      "response_status": 200,
+      "response_body": {
+        "status": "FAILURE",
+        "sessionToken": null,
+        "sessionCallbackURL": null,
+        "qrcodeImage": null,
+        "errorSummary": "Email information could not be retrieved from the preregistration event"
+      },
+      "elapsed_ms": 350.28
+    }
+  ]
+}

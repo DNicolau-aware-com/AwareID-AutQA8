@@ -1,0 +1,35 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_match_face.py::test_match_face_default_face_with_candidate",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:21.313214",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/matchFace",
+      "request_body": {
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)",
+        "candidateList": [
+          "1a6047f1-33f3-48b3-8749-1182cebb25eb"
+        ]
+      },
+      "response_status": 200,
+      "response_body": {
+        "matchCount": 1,
+        "list": [
+          {
+            "registrationCode": "1a6047f1-33f3-48b3-8749-1182cebb25eb",
+            "username": "gallery_bulk_497e211f",
+            "email": "gallery_bulk_497e211f@test.aware.com",
+            "firstName": "Bulk",
+            "lastName": "User2",
+            "image": "",
+            "matchScore": 28.06563949584961,
+            "matchScorePercent": 100.0
+          }
+        ]
+      },
+      "elapsed_ms": 631.05
+    }
+  ]
+}

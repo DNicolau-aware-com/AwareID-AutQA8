@@ -1,0 +1,88 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_register_user.py::test_register_multiple_users",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:56.117826",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_bulk_25498734",
+        "email": "gallery_bulk_25498734@test.aware.com",
+        "firstName": "Bulk",
+        "lastName": "User1",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "a62151b5-3be2-43ba-b2fa-fa5da542039d"
+      },
+      "elapsed_ms": 1030.63
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_bulk_e47f2ef1",
+        "email": "gallery_bulk_e47f2ef1@test.aware.com",
+        "firstName": "Bulk",
+        "lastName": "User2",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "ff6c6fb4-6a41-4b52-b96c-5f0e2368d7d4"
+      },
+      "elapsed_ms": 1022.88
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_bulk_025ee593",
+        "email": "gallery_bulk_025ee593@test.aware.com",
+        "firstName": "Bulk",
+        "lastName": "User3",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "400bc665-2177-47e2-8f1c-53ee9fdaea4d"
+      },
+      "elapsed_ms": 965.04
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_bulk_dddfba15",
+        "email": "gallery_bulk_dddfba15@test.aware.com",
+        "firstName": "Bulk",
+        "lastName": "User4",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "ac8717df-28f3-4e6e-86b3-45de344318ae"
+      },
+      "elapsed_ms": 1110.06
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_bulk_8bdfc0f2",
+        "email": "gallery_bulk_8bdfc0f2@test.aware.com",
+        "firstName": "Bulk",
+        "lastName": "User5",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "79e91d64-0899-4743-acf9-4aa9c67e4237"
+      },
+      "elapsed_ms": 1174.86
+    }
+  ]
+}

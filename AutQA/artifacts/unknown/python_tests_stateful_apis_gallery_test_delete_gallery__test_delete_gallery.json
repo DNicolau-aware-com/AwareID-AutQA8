@@ -1,0 +1,35 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_delete_gallery.py::test_delete_gallery",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:05.114701",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "test_gallery_f4570021"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 615.73
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/gallery/listGallery",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "list": [
+          {
+            "galleryName": "(default)",
+            "numberOfRegistrations": 137,
+            "lastUpdated": "2026-03-17T17:34:26",
+            "lastUpdatedUuid": "956caa01-68c7-40bb-a4ef-db48b24113ed"
+          }
+        ]
+      },
+      "elapsed_ms": 383.35
+    }
+  ]
+}

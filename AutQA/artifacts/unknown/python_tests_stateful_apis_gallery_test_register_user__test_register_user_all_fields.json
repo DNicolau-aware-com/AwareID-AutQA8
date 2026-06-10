@@ -1,0 +1,25 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_register_user.py::test_register_user_all_fields",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:37.828444",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_full_dc680d95",
+        "email": "gallery_full_dc680d95@test.aware.com",
+        "firstName": "Gallery",
+        "lastName": "TestUser",
+        "phoneNumber": "555-000-1234",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 200,
+      "response_body": {
+        "registrationCode": "f9280cb0-c143-4d90-88f2-eb9c835b4ef4"
+      },
+      "elapsed_ms": 1347.68
+    }
+  ]
+}

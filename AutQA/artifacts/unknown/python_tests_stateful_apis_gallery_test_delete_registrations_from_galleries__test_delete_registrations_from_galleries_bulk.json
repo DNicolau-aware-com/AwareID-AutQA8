@@ -1,0 +1,73 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_delete_registrations_from_galleries.py::test_delete_registrations_from_galleries_bulk",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:12.557244",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_ac190755"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 972.97
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/addGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_93bec5a6"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 658.69
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteRegistrationsFromGalleries",
+      "request_body": {
+        "galleryNames": [
+          "tmpgallery_ac190755",
+          "tmpgallery_93bec5a6"
+        ],
+        "registrationCodes": [
+          "1a6047f1-33f3-48b3-8749-1182cebb25eb",
+          "9e97c5c4-1a11-4371-a8da-9f37c3e0d71a",
+          "cec42a68-08a9-4ab1-8140-9af8bed89a88",
+          "91d66132-7446-45fe-852a-684945f86804",
+          "99be3a23-ba17-4a19-a32b-161c9eee60cb",
+          "0e936efb-dc92-4261-9509-2f36b234d677",
+          "da4e4ac1-2b33-4eed-a283-68fffc39855e",
+          "4f8e3b4a-b0f5-4e81-af7e-35ae3239041f",
+          "fae6e63b-5577-40ee-bfe6-a431fc57c7ad",
+          "f3dd9fa3-9a4b-4e7c-a5db-87d9be7d5855"
+        ]
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 352.66
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_ac190755"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 625.03
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/deleteGallery",
+      "request_body": {
+        "galleryName": "tmpgallery_93bec5a6"
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 620.89
+    }
+  ]
+}

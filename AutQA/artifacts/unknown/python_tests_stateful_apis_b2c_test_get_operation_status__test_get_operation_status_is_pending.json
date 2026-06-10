@@ -1,0 +1,34 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/b2c/test_get_operation_status.py::test_get_operation_status_is_pending",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:18:50.054037",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/b2c/triggerAuthenticate",
+      "request_body": {
+        "username": "AUT"
+      },
+      "response_status": 200,
+      "response_body": {
+        "status": "SUCCESS",
+        "sessionToken": "203b3645-16cf-428e-91ab-7f3f5b084b11",
+        "sessionCallbackURL": "https://qa8.awareid.com/onboarding?data=OMtVSWbtRg32-LjhXBn6Ix9IvRJko1Lp-2NmQhYjkkMZ5qtWjyFrpu5CmrgFg8Nem1QDEwwbF5Ny45v1cWL0uCykUWmuVY_tL9Ydq4udYfJwm3VyOfVUORVhotnAgyr7lBcpW7PcaEkJtbRRpYQskluWnZjg2ZRZxnRdmYFhxsjtKyhPnYA5tVuOLZFiWlYWdv_5ZKtZPZbx-5KdMJKCl8CEyjKr66MwPmbCAxY3QUZhoNkX0bwA_BfhDelUYaIj-_HZe43StvfdbrKk4jqwNIVtKFZ61YLdr7aPFHZnjxpvjtC18TNFTAiFzkQF3Fma6Mte3ywujKRdYIstF1UXvJEn2OHKAwfBM53rvoR0QkCca_CWX6F45KwfvLjJCn4MdqwHFi8fUrAjMc_oxkxi2lEMM4H9qZTRww5sqf7oiuK90A2pP3UZwQgyUwvPyCcInNhFir2fBIE5shNxU4y-JQ",
+        "qrcodeImage": "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",
+        "errorSummary": null
+      },
+      "elapsed_ms": 291.73
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/b2c/operationStatus/203b3645-16cf-428e-91ab-7f3f5b084b11",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "completionStatus": "Pending"
+      },
+      "elapsed_ms": 283.66
+    }
+  ]
+}

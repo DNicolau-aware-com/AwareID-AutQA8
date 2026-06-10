@@ -1,0 +1,25 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_register_user.py::test_register_user_invalid_image",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:50.273004",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "username": "gallery_badb64_1c89d2d5",
+        "email": "gallery_badb64_1c89d2d5@test.aware.com",
+        "image": "dGhpc19pc19ub3RfYV9yZWFsX2ltYWdl"
+      },
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "Failed to perform Nexa|Face export request: Internal Server Error: {\"error\":{\"code\":500,\"description\":\"The input image is invalid.\"}}Modalities added for subject: \nModalities failed to add for subject: Face",
+        "status": 500,
+        "timestamp": "2026-03-18 02:44:35"
+      },
+      "elapsed_ms": 3289.14
+    }
+  ]
+}

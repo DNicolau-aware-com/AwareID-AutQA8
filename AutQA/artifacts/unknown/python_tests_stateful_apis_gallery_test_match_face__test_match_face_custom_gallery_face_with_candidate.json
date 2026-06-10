@@ -1,0 +1,25 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_match_face.py::test_match_face_custom_gallery_face_with_candidate",
+  "result": "SKIPPED",
+  "timestamp": "2026-03-18T10:43:26.144090",
+  "transactions": [
+    {
+      "method": "GET",
+      "url": "/onboarding/gallery/listGallery",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "list": [
+          {
+            "galleryName": "(default)",
+            "numberOfRegistrations": 137,
+            "lastUpdated": "2026-03-17T17:34:26",
+            "lastUpdatedUuid": "956caa01-68c7-40bb-a4ef-db48b24113ed"
+          }
+        ]
+      },
+      "elapsed_ms": 312.65
+    }
+  ]
+}

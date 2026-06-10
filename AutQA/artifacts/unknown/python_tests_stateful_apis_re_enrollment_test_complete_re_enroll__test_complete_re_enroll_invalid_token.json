@@ -1,0 +1,1743 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/re_enrollment/test_complete_re_enroll.py::test_complete_re_enroll_invalid_token",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:45:38.474863",
+  "transactions": [
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 431.98
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 481.26
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 330.58
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 414.48
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 361.36
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 491.85
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 356.0
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 443.46
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 393.54
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 452.94
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 403.1
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/reEnrollment/completeReEnroll",
+      "request_body": {
+        "reEnrollmentToken": "d52fc835-5eb6-4e30-b9fd-b1ceacbbc41c"
+      },
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "token not found",
+        "status": 500,
+        "timestamp": "2026-03-18 02:46:21"
+      },
+      "elapsed_ms": 3001.7
+    },
+    {
+      "method": "GET",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": null,
+      "response_status": 200,
+      "response_body": {
+        "serviceVersion": "12.15-SNAPSHOT",
+        "customerDataConfig": {
+          "dataIntegrityKey": "297f49884d404179b29779c91f213540",
+          "purchasedBundles": [
+            "AID-2024-AO-CPF",
+            "AID-2022-AO-NexaFace-1-To-n",
+            "AID-2022-ON-PRM",
+            "AID-2022-ON-STA"
+          ],
+          "thirdPartyChecks": [],
+          "customerName": "testawaremobileapp",
+          "customerLogo": ""
+        },
+        "ocrRulesConfig": {
+          "list": [
+            {
+              "ocrRuleId": "052a3925-2d02-4777-97de-b498c7b05321",
+              "deleteOcrRule": false,
+              "field": [
+                "9:Given name(s)",
+                "5:Date of Birth"
+              ],
+              "docTypeKeyword": "",
+              "enabled": true
+            }
+          ]
+        },
+        "geofenceConfig": {
+          "verifyDevice": false,
+          "addDevice": false,
+          "sites": []
+        },
+        "cpfConfig": {
+          "cpfCheck": {
+            "attributes": [
+              {
+                "matchPercentage": 90,
+                "path": "Name",
+                "displayName": "Name",
+                "requireUserInput": true,
+                "attributeName": "name",
+                "check": true
+              },
+              {
+                "matchPercentage": 90,
+                "path": "MotherName",
+                "displayName": "MotherName",
+                "requireUserInput": true,
+                "attributeName": "motherName",
+                "check": true
+              },
+              {
+                "path": "BirthDate",
+                "displayName": "BirthDate",
+                "requireUserInput": true,
+                "attributeName": "birthDate",
+                "check": true
+              },
+              {
+                "path": "Age",
+                "displayName": "Age",
+                "minimumAge": 0,
+                "attributeName": "age",
+                "check": true
+              },
+              {
+                "path": "TaxIdStatus",
+                "validResult": [
+                  "REGULAR"
+                ],
+                "displayName": "TaxIdStatus",
+                "attributeName": "taxIdStatus",
+                "check": true
+              }
+            ],
+            "enabled": true
+          },
+          "complianceCheck": {
+            "checkIfCurrentSanctioned": true,
+            "checkIfCurrentPEP": true,
+            "checkIfSanctionedBefore": true,
+            "minMatch": 70,
+            "enabled": true
+          },
+          "biometricCheck": {
+            "checkLiveness": false,
+            "minMatchScore": 0.8,
+            "enabled": true
+          }
+        },
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        },
+        "jumioConfig": {
+          "apikey": "",
+          "clientSecret": "",
+          "URL": "https://upload.netverify.com/api/netverify/v2/acquisitions"
+        },
+        "expirationTime": "2029-03-12 18:20:45 +0000 UTC",
+        "documentVerificationConfig": {
+          "ocrPortraitSelfieMatchThreshold": "2.0",
+          "rfidPortraitSelfieMatchThreshold": "3",
+          "ocrChecksOnFields": [
+            "Date of expiry"
+          ],
+          "rfidValidationChecks": [
+            "signatureOnSODValid",
+            "certificateChainValid",
+            "dataGroupHashesValid",
+            "activeAuthenticationResult"
+          ]
+        },
+        "biometricsDataConfig": {
+          "voiceMatchThresholdAuth": "3",
+          "faceLivenessSecurityLevelEnroll": "2",
+          "faceMatchThresholdAuth": "5",
+          "voiceLivenessSecurityLevelAuth": "2",
+          "faceLivenessSecurityLevelAuth": "2",
+          "voiceLivenessSecurityLevelEnroll": "2"
+        }
+      },
+      "elapsed_ms": 384.26
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": false,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": false
+            },
+            "authentication": {
+              "verifyFace": false,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 304.88
+    },
+    {
+      "method": "POST",
+      "url": "/onboarding/admin/customerConfig",
+      "request_body": {
+        "onboardingConfig": {
+          "onboardingOptions": {
+            "reenrollment": {
+              "verifyFace": true,
+              "verifyVoice": false
+            },
+            "document": {
+              "rfid": "DISABLED"
+            },
+            "enrollment": {
+              "checkDuplicateEnrollment": {
+                "matchThreshold": 90,
+                "enabled": true
+              },
+              "addPIN": false,
+              "addVoice": false,
+              "checkGeofences": false,
+              "addDevice": false,
+              "addDocument": false,
+              "geofences": [],
+              "checkCPF": false,
+              "icaoVerification": "DISABLED",
+              "ageEstimation": {
+                "maxTolerance": 0,
+                "maxAge": 101,
+                "minAge": 1,
+                "enabled": false,
+                "minTolerance": 0
+              },
+              "addFace": true
+            },
+            "authentication": {
+              "verifyFace": true,
+              "verifyDevice": "",
+              "checkGeofences": false,
+              "verifyVoice": false,
+              "geofences": [],
+              "authenticationType": "BIOMETRIC_VERIFICATION"
+            }
+          },
+          "maxDeviceIds": 3,
+          "saveToSubjectManager": 1,
+          "recordRenrollmentVideo": true,
+          "recordAuthenticationVideo": true,
+          "maxAuthenticationAttempts": 4,
+          "recordEnrollmentVideo": true
+        }
+      },
+      "response_status": 200,
+      "response_body": null,
+      "elapsed_ms": 366.14
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/gallery/test_register_user.py::test_register_user_missing_username",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:43:40.974795",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/gallery/registerUser",
+      "request_body": {
+        "email": "no_username@test.aware.com",
+        "image": "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBw... (truncated, length: 49652)"
+      },
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "INTERNAL_SERVER_ERROR",
+        "errorMsg": "Missing username attribute",
+        "status": 500,
+        "timestamp": "2026-03-18 02:44:26"
+      },
+      "elapsed_ms": 2985.15
+    }
+  ]
+}

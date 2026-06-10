@@ -1,0 +1,22 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/b2c/test_trigger_enroll.py::test_trigger_enroll_missing_username",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:19:10.326279",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/b2c/triggerEnroll",
+      "request_body": {},
+      "response_status": 200,
+      "response_body": {
+        "status": "FAILURE",
+        "sessionToken": null,
+        "sessionCallbackURL": null,
+        "qrcodeImage": null,
+        "errorSummary": "User information could not be retrieved from the preregistration event"
+      },
+      "elapsed_ms": 294.73
+    }
+  ]
+}

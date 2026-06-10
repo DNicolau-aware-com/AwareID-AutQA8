@@ -1,0 +1,23 @@
+{
+  "run_id": "unknown",
+  "test": "python/tests/stateful_apis/b2c/test_trigger_authenticate.py::test_trigger_authenticate_unknown_username",
+  "result": "PASSED",
+  "timestamp": "2026-03-18T10:19:08.049712",
+  "transactions": [
+    {
+      "method": "POST",
+      "url": "/onboarding/b2c/triggerAuthenticate",
+      "request_body": {
+        "username": "dantest_20260318_101905_64b3d8"
+      },
+      "response_status": 500,
+      "response_body": {
+        "errorCode": "500",
+        "errorMsg": "Internal server error while processing request",
+        "status": 500,
+        "timestamp": "2026-03-18 02:19:53"
+      },
+      "elapsed_ms": 2817.81
+    }
+  ]
+}
